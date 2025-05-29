@@ -1,0 +1,9 @@
+add_executable(recovery_stand_example recovery_stand_example.cpp)
+add_executable(balance_stand_example balance_stand_example.cpp)
+add_executable(execute_trick_action_example execute_trick_action_example.cpp)
+add_executable(joy_control_example joy_control_example.cpp)
+
+target_link_libraries(balance_stand_example PRIVATE magic::m1_sdk)
+target_link_libraries(execute_trick_action_example PRIVATE magic::m1_sdk)
+target_link_libraries(joy_control_example PRIVATE magic::m1_sdk)
+target_link_libraries(recovery_stand_example PRIVATE magic::m1_sdk)

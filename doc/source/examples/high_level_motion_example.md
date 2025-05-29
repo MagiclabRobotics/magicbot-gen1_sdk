@@ -1,0 +1,388 @@
+# 高层运动控制示例
+
+> 该示例展示了如何使用 MagicRobot SDK 进行初始化、连接机器人、高层运动控制（步态、特技、遥控）等基本操作。
+
+示例路径：
+- `recovery_stand_example.cpp`
+- `balance_stand_example.cpp`
+- `execute_trick_action_example.cpp`
+- `joy_control_example.cpp`
+
+参考文档：
+- `high_level_motion_reference.md`
+
+
+1. 站立锁定示例，一般用于挂起状态下进行站立锁定，便于落地调机：
+
+
+```Cpp
+#include "magic_robot.h"
+
+#include <unistd.h>
+#include <csignal>
+
+#include <iostream>
+
+using namespace magic::robot;
+
+magic::robot::MagicRobot robot;
+
+void signalHandler(int signum) {
+  std::cout << "Interrupt signal (" << signum << ") received.\n";
+
+  robot.Shutdown();
+  // 退出进程
+  exit(signum);
+}
+
+int main() {
+  // 绑定 SIGINT（Ctrl+C）
+  signal(SIGINT, signalHandler);
+
+  std::string local_ip = "192.168.54.111";
+  // 配置本机网线直连机器的IP地址，并进行SDK初始化
+  if (!robot.Initialize(local_ip)) {
+    std::cerr << "robot sdk initialize failed." << std::endl;
+    robot.Shutdown();
+    return -1;
+  }
+
+  // 设置rpc超时时间为5s
+  robot.SetTimeout(5000);
+
+  // 连接机器人
+  auto status = robot.Connect();
+  if (status.code != ErrorCode::OK) {
+    std::cerr << "connect robot failed"
+              << ", code: " << status.code
+              << ", message: " << status.message << std::endl;
+    robot.Shutdown();
+    return -1;
+  }
+
+  // 切换运控控制器为底层控制器，默认是高层控制器
+  status = robot.SetMotionControlLevel(ControllerLevel::HighLevel);
+  if (status.code != ErrorCode::OK) {
+    std::cerr << "switch robot motion control level failed"
+              << ", code: " << status.code
+              << ", message: " << status.message << std::endl;
+    robot.Shutdown();
+    return -1;
+  }
+
+  // 获取高层运控控制器
+  auto& controller = robot.GetHighLevelMotionController();
+
+  // 设置步态
+  status = controller.SetGait(GaitMode::GAIT_RECOVERY_STAND);
+  if (status.code != ErrorCode::OK) {
+    std::cerr << "set robot gait failed"
+              << ", code: " << status.code
+              << ", message: " << status.message << std::endl;
+    robot.Shutdown();
+    return -1;
+  }
+
+  usleep(5000000);
+
+  // 断开与机器人的链接
+  status = robot.Disconnect();
+  if (status.code != ErrorCode::OK) {
+    std::cerr << "disconnect robot failed"
+              << ", code: " << status.code
+              << ", message: " << status.message << std::endl;
+    robot.Shutdown();
+    return -1;
+  }
+
+  robot.Shutdown();
+
+  return 0;
+}
+```
+
+
+2. 平衡站立示例，主要用于机器人落地后进行力控平衡站立，便于进行姿态展示：
+
+> ⚠️ **Notice:** 需要确保当前处于“锁定站立”状态。
+
+```Cpp
+#include "magic_robot.h"
+
+#include <unistd.h>
+#include <csignal>
+
+#include <iostream>
+
+using namespace magic::robot;
+
+magic::robot::MagicRobot robot;
+
+void signalHandler(int signum) {
+  std::cout << "Interrupt signal (" << signum << ") received.\n";
+
+  robot.Shutdown();
+  // 退出进程
+  exit(signum);
+}
+
+int main() {
+  // 绑定 SIGINT（Ctrl+C）
+  signal(SIGINT, signalHandler);
+
+  std::string local_ip = "192.168.54.111";
+  // 配置本机网线直连机器的IP地址，并进行SDK初始化
+  if (!robot.Initialize(local_ip)) {
+    std::cerr << "robot sdk initialize failed." << std::endl;
+    robot.Shutdown();
+    return -1;
+  }
+
+  // 设置rpc超时时间为5s
+  robot.SetTimeout(5000);
+
+  // 连接机器人
+  auto status = robot.Connect();
+  if (status.code != ErrorCode::OK) {
+    std::cerr << "connect robot failed"
+              << ", code: " << status.code
+              << ", message: " << status.message << std::endl;
+    robot.Shutdown();
+    return -1;
+  }
+
+  // 切换运控控制器为底层控制器，默认是高层控制器
+  status = robot.SetMotionControlLevel(ControllerLevel::HighLevel);
+  if (status.code != ErrorCode::OK) {
+    std::cerr << "switch robot motion control level failed"
+              << ", code: " << status.code
+              << ", message: " << status.message << std::endl;
+    robot.Shutdown();
+    return -1;
+  }
+
+  // 获取高层运控控制器
+  auto& controller = robot.GetHighLevelMotionController();
+
+  // 设置姿态展示步态
+  status = controller.SetGait(GaitMode::GAIT_BALANCE_STAND);
+  if (status.code != ErrorCode::OK) {
+    std::cerr << "set robot gait failed"
+              << ", code: " << status.code
+              << ", message: " << status.message << std::endl;
+    robot.Shutdown();
+    return -1;
+  }
+
+  usleep(5000000);
+
+  // 断开与机器人的链接
+  status = robot.Disconnect();
+  if (status.code != ErrorCode::OK) {
+    std::cerr << "disconnect robot failed"
+              << ", code: " << status.code
+              << ", message: " << status.message << std::endl;
+    robot.Shutdown();
+    return -1;
+  }
+
+  robot.Shutdown();
+
+  return 0;
+}
+
+```
+
+3. 特技展示示例，主要用于展示机器人的特技动作：
+
+> ⚠️ **Notice:** 需要确保当前处于“平衡站立”状态。
+
+```Cpp
+
+#include "magic_robot.h"
+
+#include <unistd.h>
+#include <csignal>
+
+#include <iostream>
+
+using namespace magic::robot;
+
+magic::robot::MagicRobot robot;
+
+void signalHandler(int signum) {
+  std::cout << "Interrupt signal (" << signum << ") received.\n";
+
+  robot.Shutdown();
+  // 退出进程
+  exit(signum);
+}
+
+int main() {
+  // 绑定 SIGINT（Ctrl+C）
+  signal(SIGINT, signalHandler);
+
+  std::string local_ip = "192.168.54.111";
+  // 配置本机网线直连机器的IP地址，并进行SDK初始化
+  if (!robot.Initialize(local_ip)) {
+    std::cerr << "robot sdk initialize failed." << std::endl;
+    robot.Shutdown();
+    return -1;
+  }
+
+  // 设置rpc超时时间为5s
+  robot.SetTimeout(5000);
+
+  // 连接机器人
+  auto status = robot.Connect();
+  if (status.code != ErrorCode::OK) {
+    std::cerr << "connect robot failed"
+              << ", code: " << status.code
+              << ", message: " << status.message << std::endl;
+    robot.Shutdown();
+    return -1;
+  }
+
+  // 切换运控控制器为底层控制器，默认是高层控制器
+  status = robot.SetMotionControlLevel(ControllerLevel::HighLevel);
+  if (status.code != ErrorCode::OK) {
+    std::cerr << "switch robot motion control level failed"
+              << ", code: " << status.code
+              << ", message: " << status.message << std::endl;
+    robot.Shutdown();
+    return -1;
+  }
+
+  // 等待5s进入恢复站立状态
+  usleep(5000000);
+
+  // 获取高层运控控制器
+  auto& controller = robot.GetHighLevelMotionController();
+
+  // 执行特技
+  status = controller.ExecuteTrick(TrickAction::ACTION_CELEBRATE);
+  if (status.code != ErrorCode::OK) {
+    std::cerr << "execute robot trick failed"
+              << ", code: " << status.code
+              << ", message: " << status.message << std::endl;
+    robot.Shutdown();
+    return -1;
+  }
+
+  usleep(2000000);
+
+  // 断开与机器人的链接
+  status = robot.Disconnect();
+  if (status.code != ErrorCode::OK) {
+    std::cerr << "disconnect robot failed"
+              << ", code: " << status.code
+              << ", message: " << status.message << std::endl;
+    robot.Shutdown();
+    return -1;
+  }
+
+  robot.Shutdown();
+
+  return 0;
+}
+
+```
+
+
+4. 遥控示例，主要用于展示控制机器人向前行走：
+
+> ⚠️ **Notice:** 需要确保当前处于“非挂起”和“非平衡站立”状态。
+
+```Cpp
+#include "magic_robot.h"
+
+#include <unistd.h>
+#include <csignal>
+
+#include <iostream>
+
+using namespace magic::robot;
+
+magic::robot::MagicRobot robot;
+
+void signalHandler(int signum) {
+  std::cout << "Interrupt signal (" << signum << ") received.\n";
+
+  robot.Shutdown();
+  // 退出进程
+  exit(signum);
+}
+
+int main() {
+  // 绑定 SIGINT（Ctrl+C）
+  signal(SIGINT, signalHandler);
+
+  std::string local_ip = "192.168.54.111";
+  // 配置本机网线直连机器的IP地址，并进行SDK初始化
+  if (!robot.Initialize(local_ip)) {
+    std::cerr << "robot sdk initialize failed." << std::endl;
+    robot.Shutdown();
+    return -1;
+  }
+
+  // 设置rpc超时时间为5s
+  robot.SetTimeout(5000);
+
+  // 连接机器人
+  auto status = robot.Connect();
+  if (status.code != ErrorCode::OK) {
+    std::cerr << "connect robot failed"
+              << ", code: " << status.code
+              << ", message: " << status.message << std::endl;
+    robot.Shutdown();
+    return -1;
+  }
+
+  // 切换运控控制器为底层控制器，默认是高层控制器
+  status = robot.SetMotionControlLevel(ControllerLevel::HighLevel);
+  if (status.code != ErrorCode::OK) {
+    std::cerr << "switch robot motion control level failed"
+              << ", code: " << status.code
+              << ", message: " << status.message << std::endl;
+    robot.Shutdown();
+    return -1;
+  }
+
+  // 获取高层运控控制器
+  auto& controller = robot.GetHighLevelMotionController();
+
+  // 向前行走
+  for (;;) {
+    JoystickCommand joy_command;
+    joy_command.left_x_axis = 0.0;
+    joy_command.left_y_axis = 1.0;
+    joy_command.right_x_axis = 0.0;
+    joy_command.right_y_axis = 0.0;
+    status = controller.SendJoyStickCommand(joy_command);
+    if (status.code != ErrorCode::OK) {
+      std::cerr << "execute robot trick failed"
+                << ", code: " << status.code
+                << ", message: " << status.message << std::endl;
+      robot.Shutdown();
+      return -1;
+    }
+    // 等待50ms
+    usleep(50000);
+  }
+
+  // 断开与机器人的链接
+  status = robot.Disconnect();
+  if (status.code != ErrorCode::OK) {
+    std::cerr << "disconnect robot failed"
+              << ", code: " << status.code
+              << ", message: " << status.message << std::endl;
+    robot.Shutdown();
+    return -1;
+  }
+
+  robot.Shutdown();
+
+  return 0;
+}
+
+```
