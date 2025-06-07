@@ -179,9 +179,10 @@ struct JoystickCommand {
  * @brief 机器人状态枚举，适用于状态机控制
  */
 enum class GaitMode : int32_t {
-  GAIT_NONE = 0,               // 空闲状态
+  GAIT_PASSIVE = 0,            // 空闲模式
   GAIT_RECOVERY_STAND = 1,     // 站立锁定/站立恢复
   GAIT_CLASSIC_WALK = 9,       // 经典行走
+  GAIT_PURE_DAMPER = 10,       // 阻尼模式
   GAIT_HUMANOID_WALK = 11,     // 拟人行走
   GAIT_ALL_TERRAIN_WALK = 16,  // 全地形行走
   GAIT_FAST_WALK = 17,         // 高速行走

@@ -53,6 +53,9 @@ int main() {
     return -1;
   }
 
+  // 此时需要等待机器人进入恢复站立状态，并落地
+  usleep(10000000);
+
   // 获取高层运控控制器
   auto& controller = robot.GetHighLevelMotionController();
 

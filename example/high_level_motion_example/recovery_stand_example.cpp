@@ -43,6 +43,7 @@ int main() {
   }
 
   // 切换运控控制器为底层控制器，默认是高层控制器
+  // 默认会进入阻尼模式
   status = robot.SetMotionControlLevel(ControllerLevel::HighLevel);
   if (status.code != ErrorCode::OK) {
     std::cerr << "switch robot motion control level failed"
