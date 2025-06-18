@@ -9,7 +9,7 @@ set(CMAKE_IMPORT_FILE_VERSION 1)
 
 set(_targetsDefined)
 set(_targetsNotDefined)
-set(_expectedTargets magic_m1_sdk)
+set(_expectedTargets magic_gen1_sdk)
 foreach(_expectedTarget IN LISTS _expectedTargets)
   if(NOT TARGET ${_expectedTarget})
     list(APPEND _targetsNotDefined ${_expectedTarget})
@@ -48,17 +48,17 @@ if(_IMPORT_PREFIX STREQUAL "/")
   set(_IMPORT_PREFIX "")
 endif()
 
-add_library(magic_m1_sdk SHARED IMPORTED GLOBAL)
-add_library(magic::m1_sdk ALIAS magic_m1_sdk)
+add_library(magic_gen1_sdk SHARED IMPORTED GLOBAL)
+add_library(magic::gen1_sdk ALIAS magic_gen1_sdk)
 
-set_target_properties(magic_m1_sdk PROPERTIES
+set_target_properties(magic_gen1_sdk PROPERTIES
     IMPORTED_LOCATION "${_IMPORT_PREFIX}/lib/libmagic_sdk.so"
     INTERFACE_INCLUDE_DIRECTORIES "${_IMPORT_PREFIX}/include"
     LINKER_LANGUAGE CXX
 )
 
-list(APPEND _IMPORT_CHECK_TARGETS magic_m1_sdk)
-list(APPEND _IMPORT_CHECK_FILES_FOR_magic_m1_sdk "${_IMPORT_PREFIX}/lib/libmagic_sdk.so")
+list(APPEND _IMPORT_CHECK_TARGETS magic_gen1_sdk)
+list(APPEND _IMPORT_CHECK_FILES_FOR_magic_gen1_sdk "${_IMPORT_PREFIX}/lib/libmagic_sdk.so")
 
 foreach(target IN LISTS _IMPORT_CHECK_TARGETS)
   foreach(file IN LISTS _IMPORT_CHECK_FILES_FOR_${target})

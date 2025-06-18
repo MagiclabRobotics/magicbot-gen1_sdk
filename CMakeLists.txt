@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.18)
 
-project(magic_m1_sdk LANGUAGES C CXX)
+project(magic_gen1_sdk LANGUAGES C CXX)
 
 ## Project Options
 option(BUILD_EXAMPLES "Build examples" ON)
@@ -28,27 +28,27 @@ set(BUILD_SHARED_LIBS ON)
 
 message(STATUS "Current system architecture: ${CMAKE_SYSTEM_PROCESSOR}")
 
-set(MAGIC_M1_SDK_PATH ${CMAKE_CURRENT_SOURCE_DIR}/lib/${CMAKE_SYSTEM_PROCESSOR})
+set(MAGIC_GEN1_SDK_PATH ${CMAKE_CURRENT_SOURCE_DIR}/lib/${CMAKE_SYSTEM_PROCESSOR})
 find_library(
-  MAGIC_M1_SDK_LIB magic_sdk
-  PATHS ${MAGIC_M1_SDK_PATH}
+  MAGIC_GEN1_SDK_LIB magic_sdk
+  PATHS ${MAGIC_GEN1_SDK_PATH}
   NO_DEFAULT_PATH)
 
-if(NOT MAGIC_M1_SDK_LIB)
+if(NOT MAGIC_GEN1_SDK_LIB)
   message(FATAL_ERROR "Magiclab SDK library for the architecture is not found")
 else()
-  message(STATUS "Magiclab SDK library found at: ${MAGIC_M1_SDK_LIB}")
+  message(STATUS "Magiclab SDK library found at: ${MAGIC_GEN1_SDK_LIB}")
 endif()
 
-message(STATUS "Importing: ${MAGIC_M1_SDK_LIB}")
+message(STATUS "Importing: ${MAGIC_GEN1_SDK_LIB}")
 
-add_library(magic_m1_sdk SHARED IMPORTED GLOBAL)
-add_library(magic::m1_sdk ALIAS magic_m1_sdk)
+add_library(magic_gen1_sdk SHARED IMPORTED GLOBAL)
+add_library(magic::gen1_sdk ALIAS magic_gen1_sdk)
 
-set_target_properties(magic_m1_sdk 
+set_target_properties(magic_gen1_sdk 
   PROPERTIES IMPORTED_LOCATION 
-      ${MAGIC_M1_SDK_LIB})
-target_include_directories(magic_m1_sdk 
+      ${MAGIC_GEN1_SDK_LIB})
+target_include_directories(magic_gen1_sdk 
   INTERFACE 
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include> 
     $<INSTALL_INTERFACE:include>)
@@ -60,15 +60,15 @@ endif()
 
 include(GNUInstallDirs)
 
-install(FILES cmake/magic_m1_sdkTargets.cmake DESTINATION lib/cmake/magic_m1_sdk)
-install(FILES ${MAGIC_M1_SDK_LIB} DESTINATION ${CMAKE_INSTALL_LIBDIR})
+install(FILES cmake/magic_gen1_sdkTargets.cmake DESTINATION lib/cmake/magic_gen1_sdk)
+install(FILES ${MAGIC_GEN1_SDK_LIB} DESTINATION ${CMAKE_INSTALL_LIBDIR})
 install(DIRECTORY include/ DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
 
 include(CMakePackageConfigHelpers)
 write_basic_package_version_file(
-  magic_m1_sdkConfigVersion.cmake
+  magic_gen1_sdkConfigVersion.cmake
   VERSION "${${PROJECT_NAME}_VERSION_MAJOR}.${${PROJECT_NAME}_VERSION_MINOR}.${${PROJECT_NAME}_VERSION_PATCH}"
   COMPATIBILITY ExactVersion)
 
-configure_file(cmake/magic_m1_sdkConfig.cmake.in magic_m1_sdkConfig.cmake @ONLY)
-install(FILES "${CMAKE_CURRENT_BINARY_DIR}/magic_m1_sdkConfig.cmake" "${CMAKE_CURRENT_BINARY_DIR}/magic_m1_sdkConfigVersion.cmake" DESTINATION lib/cmake/magic_m1_sdk)
+configure_file(cmake/magic_gen1_sdkConfig.cmake.in magic_gen1_sdkConfig.cmake @ONLY)
+install(FILES "${CMAKE_CURRENT_BINARY_DIR}/magic_gen1_sdkConfig.cmake" "${CMAKE_CURRENT_BINARY_DIR}/magic_gen1_sdkConfigVersion.cmake" DESTINATION lib/cmake/magic_gen1_sdk)

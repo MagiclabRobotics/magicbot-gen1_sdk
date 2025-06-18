@@ -251,7 +251,7 @@
 
 ## URDF参考
 
-[机器人URDF](https://github.com/MagiclabRobotics/m1_description)
+[机器人URDF](https://github.com/MagiclabRobotics/gen1_description)
 
 
 ## 底层运动控制机器人状态介绍
