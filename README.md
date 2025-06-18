@@ -1,4 +1,4 @@
-# m1_sdk
+# magicbot-gen1_sdk
 
 
 ## SDK Environment Requirements
