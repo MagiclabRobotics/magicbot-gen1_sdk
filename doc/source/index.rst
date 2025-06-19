@@ -8,31 +8,33 @@ Welcome to MagicSDK's documentation!
 
 .. toctree::
    :maxdepth: 2
-   :caption: Enviroment:
+   :caption: SDK Overview:
 
-   env/env_reference
-
+   overview/1.overview_reference
+   overview/2.architecture_reference
+   overview/3.service_reference
+   overview/4.quick_start_reference
 
 .. toctree::
    :maxdepth: 2
    :caption: Contents:
    
-   api/robot_reference
-   api/high_level_motion_reference
-   api/low_level_motion_reference
-   api/sensor_reference
-   api/audio_reference
-   api/monitor_reference
+   service/1.robot_reference
+   service/2.high_level_motion_reference
+   service/3.low_level_motion_reference
+   service/4.sensor_reference
+   service/5.audio_reference
+   service/6.monitor_reference
 
 .. toctree::
    :maxdepth: 2
    :caption: Examples:
 
-   examples/high_level_motion_example
-   examples/low_level_motion_example
-   examples/audio_example
-   examples/sensor_example
-   examples/monitor_example
+   examples/1.high_level_motion_example
+   examples/2.low_level_motion_example
+   examples/3.sensor_example
+   examples/4.audio_example
+   examples/5.monitor_example
 
 
 Indices and tables
