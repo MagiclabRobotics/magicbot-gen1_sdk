@@ -1,0 +1,3 @@
+include(CMakeFindDependencyMacro)
+
+include("${CMAKE_CURRENT_LIST_DIR}/magicbot_gen1_sdkTargets.cmake")

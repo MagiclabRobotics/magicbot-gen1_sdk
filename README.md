@@ -34,13 +34,12 @@ You must install the following libraries/packages before building or using the S
 
 #### System Libraries
 
+- `libfmt-dev`
 - `libspdlog-dev`
-- `libyaml-cpp-dev`
-- `liblcm-dev`
 
 Shell command:
 ```Bash
-sudo apt install -y libspdlog-dev libyaml-cpp-dev liblcm-dev
+sudo apt install -y libspdlog-dev libfmt-dev
 ```
 
 ## Build examples
@@ -66,20 +65,20 @@ Enter doc/build/html directory, and open `index.html`
 
 ## Installation
 
-To build your own application with this SDK, you can install the magic_gen1_sdk to specified directory:
+To build your own application with this SDK, you can install the magicbot_gen1_sdk to specified directory:
 ```
   mkdir build
   cd build
-  cmake .. -DCMAKE_INSTALL_PREFIX=/opt/magic_robotics/magic_gen1_sdk
+  cmake .. -DCMAKE_INSTALL_PREFIX=/opt/magic_robotics/magicbot_gen1_sdk
   make -j8
   sudo make install
 ```
-You can refer to example/cmake_sample on how to import the `magic_gen1_sdk` into your CMake project.
+You can refer to example/cmake_sample on how to import the `magicbot_gen1_sdk` into your CMake project.
 ```
   cd example/cmake_example
   mkdir build
   cd build
-  cmake .. -DCMAKE_PREFIX_PATH=/opt/magic_robotics/magic_gen1_sdk
+  cmake .. -DCMAKE_PREFIX_PATH=/opt/magic_robotics/magicbot_gen1_sdk
   make -j8
 ```
 Note that the path specified by -DCMAKE_PREFIX_PATH must be the same as the installation directory used above.
