@@ -12,7 +12,7 @@ This SDK requires the following software and hardware environment to function pr
 
 #### System Configuration
 
-The following configurations need to be added to the `/etc/security/limits.conf` file for regular users:
+The following configurations need to be added to the `/etc/security/limits.conf` file for non-root users:
 
 ```
 *    -   rtprio   98
@@ -54,6 +54,7 @@ Installing Sphinx dependencies:
   pip install sphinx
   pip install myst-parser
   pip install linkify-it-py
+  pip install sphinx_rtd_theme
 ```
 Build Sphinx documentation：
 ```
