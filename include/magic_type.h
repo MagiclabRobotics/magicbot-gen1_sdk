@@ -15,7 +15,7 @@ constexpr uint8_t kHandJointNum = 6;
 constexpr uint8_t kHandNum = 2;
 constexpr uint8_t kHeadJointNum = 2;
 constexpr uint8_t kArmJointNum = 14;
-constexpr uint8_t kWaistJointNum = 3;
+constexpr uint8_t kWaistJointNum = 2;
 constexpr uint8_t kLegJointNum = 12;
 
 constexpr uint64_t kPeriodMs = 2;  ///< 控制器周期时间，单位为毫秒
@@ -186,7 +186,10 @@ enum class GaitMode : int32_t {
   GAIT_HUMANOID_WALK = 11,     // 拟人行走
   GAIT_ALL_TERRAIN_WALK = 16,  // 全地形行走
   GAIT_FAST_WALK = 17,         // 高速行走
+  GAIT_SQUAT = 40,             // 蹲起
   GAIT_BALANCE_STAND = 46,     // 平衡站立（支持移动）
+  GAIT_ARM_SWING_WALK = 47,    // 摆臂行走
+  GAIT_HUMANOID_RUN = 100,     // 拟人奔跑
   GAIT_LOWLEVL_SDK = 200,      // 底层控制SDK模式
 };
 
