@@ -8,7 +8,7 @@
 #include <memory>
 #include <string>
 
-namespace magic::robot::motion {
+namespace magic::gen1::motion {
 
 class LowLevelMotionController;
 using LowLevelMotionControllerPtr = std::unique_ptr<LowLevelMotionController>;
@@ -231,4 +231,4 @@ class MAGIC_EXPORT_API LowLevelMotionController final : public MotionControllerB
   void SubscribeBodyImu(const BodyImuCallback callback);
 };
 
-}  // namespace magic::robot::motion
+}  // namespace magic::gen1::motion

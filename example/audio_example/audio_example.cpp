@@ -5,9 +5,9 @@
 
 #include <iostream>
 
-using namespace magic::robot;
+using namespace magic::gen1;
 
-magic::robot::MagicRobot robot;
+magic::gen1::MagicRobot robot;
 
 void signalHandler(int signum) {
   std::cout << "Interrupt signal (" << signum << ") received.\n";
@@ -95,7 +95,7 @@ int main() {
     return -1;
   }
 
-  // 等待2s
+  // 等待5s
   usleep(5000000);
 
   // 停止播放语音
@@ -108,8 +108,48 @@ int main() {
     return -1;
   }
 
-  // 等待5s
+  // 等待2s
   usleep(2000000);
+
+  // 打开音频流
+  status = controller.OpenAudioStream();
+  if (status.code != ErrorCode::OK) {
+    std::cerr << "open audio stream failed"
+              << ", code: " << status.code
+              << ", message: " << status.message << std::endl;
+    robot.Shutdown();
+    return -1;
+  }
+  std::cout << "open audio stream success" << std::endl;
+
+  // 订阅音频流
+  controller.SubscribeOriginAudioStream([](const std::shared_ptr<AudioStream> data) {
+    static int32_t counter = 0;
+    if (counter++ % 30 == 0) {
+      std::cout << "Received origin audio stream data, size: " << data->data_length << std::endl;
+    }
+  });
+
+  controller.SubscribeBfAudioStream([](const std::shared_ptr<AudioStream> data) {
+    static int32_t counter = 0;
+    if (counter++ % 30 == 0) {
+      std::cout << "Received origin audio stream data, size: " << data->data_length << std::endl;
+    }
+  });
+
+  // 等待20s
+  usleep(20000000);
+
+  // 关闭音频流
+  status = controller.CloseAudioStream();
+  if (status.code != ErrorCode::OK) {
+    std::cerr << "close audio stream failed"
+              << ", code: " << status.code
+              << ", message: " << status.message << std::endl;
+    robot.Shutdown();
+    return -1;
+  }
+  std::cout << "close audio stream success" << std::endl;
 
   // 断开与机器人的链接
   status = robot.Disconnect();

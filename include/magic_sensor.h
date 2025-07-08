@@ -8,7 +8,7 @@
 #include <memory>
 #include <string>
 
-namespace magic::robot::sensor {
+namespace magic::gen1::sensor {
 
 class SensorController;
 using SensorControllerPtr = std::unique_ptr<SensorController>;
@@ -70,16 +70,28 @@ class MAGIC_EXPORT_API SensorController final : public NonCopyable {
   // === RGBD 相机控制 ===
 
   /**
-   * @brief 打开 RGBD 相机（包括头部和腰部）。
+   * @brief 打开头部 RGBD 相机（包括头部和腰部）。
    * @return 操作状态。
    */
-  Status OpenRgbdCamera();
+  Status OpenHeadRgbdCamera();
 
   /**
-   * @brief 关闭 RGBD 相机。
+   * @brief 关闭头部 RGBD 相机。
    * @return 操作状态。
    */
-  Status CloseRgbdCamera();
+  Status CloseHeadRgbdCamera();
+
+  /**
+   * @brief 打开腰部 RGBD 相机（包括头部和腰部）。
+   * @return 操作状态。
+   */
+  Status OpenWaistRgbdCamera();
+
+  /**
+   * @brief 关闭腰部 RGBD 相机。
+   * @return 操作状态。
+   */
+  Status CloseWaistRgbdCamera();
 
   // === 三目相机控制 ===
 
@@ -167,4 +179,4 @@ class MAGIC_EXPORT_API SensorController final : public NonCopyable {
   std::atomic_bool is_shutdown_{true};  // 标记是否已初始化
 };
 
-}  // namespace magic::robot::sensor
+}  // namespace magic::gen1::sensor

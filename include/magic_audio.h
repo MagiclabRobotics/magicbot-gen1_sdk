@@ -4,10 +4,11 @@
 #include "magic_type.h"
 
 #include <atomic>
+#include <functional>
 #include <memory>
 #include <string>
 
-namespace magic::robot::audio {
+namespace magic::gen1::audio {
 
 class AudioController;
 using AudioControllerPtr = std::unique_ptr<AudioController>;
@@ -20,6 +21,12 @@ using AudioControllerPtr = std::unique_ptr<AudioController>;
  * 音量设置与查询，并提供初始化和资源释放机制。
  */
 class MAGIC_EXPORT_API AudioController final : public NonCopyable {
+  // 消息指针类型定义（智能指针，便于内存管理）
+  using AudioStreamPtr = std::shared_ptr<AudioStream>;  // IMU 惯性测量单元消息指针
+  // 音频流数据的回调函数类型定义
+  using OriginAudioStreamCallback = std::function<void(const AudioStreamPtr)>;  // Origin音频流数据的回调
+  using BfAudioStreamCallback = std::function<void(const AudioStreamPtr)>;      // Origin音频流数据的回调
+
  public:
   /**
    * @brief 构造函数，初始化音频控制器对象。
@@ -72,8 +79,32 @@ class MAGIC_EXPORT_API AudioController final : public NonCopyable {
    */
   Status GetVolume(int& volume);
 
+  /**
+   * @brief 打开音频流，准备进行音频播放。
+   * @return 操作状态，成功返回 Status::OK。
+   */
+  Status OpenAudioStream();
+
+  /**
+   * @brief 关闭音频流。
+   * @return 操作状态，成功返回 Status::OK。
+   */
+  Status CloseAudioStream();
+
+  /**
+   * @brief 订阅原始音频流数据
+   * @param callback 接收到原始音频流数据后的处理回调
+   */
+  void SubscribeOriginAudioStream(const OriginAudioStreamCallback callback);
+
+  /**
+   * @brief 订阅 BF 音频流数据
+   * @param callback 接收到 BF 音频流数据后的处理回调
+   */
+  void SubscribeBfAudioStream(const BfAudioStreamCallback callback);
+
  private:
   std::atomic_bool is_shutdown_{true};  // 标记是否已初始化
 };
 
-}  // namespace magic::robot::audio
+}  // namespace magic::gen1::audio

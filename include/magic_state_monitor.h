@@ -7,7 +7,7 @@
 #include <memory>
 #include <string>
 
-namespace magic::robot::monitor {
+namespace magic::gen1::monitor {
 
 class StateMonitor;
 using StateMonitorPtr = std::unique_ptr<StateMonitor>;
@@ -53,4 +53,4 @@ class MAGIC_EXPORT_API StateMonitor final : public NonCopyable {
   std::atomic_bool is_shutdown_{true};  // 标记是否已初始化
 };
 
-}  // namespace magic::robot::monitor
+}  // namespace magic::gen1::monitor

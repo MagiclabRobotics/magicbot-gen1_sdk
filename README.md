@@ -1,8 +1,6 @@
 # magicbot-gen1_sdk
 
-
 ## SDK Environment Requirements
-
 
 This SDK requires the following software and hardware environment to function properly. Please ensure all dependencies are installed and configured before using the SDK.
 
@@ -12,16 +10,26 @@ This SDK requires the following software and hardware environment to function pr
 
 #### System Configuration
 
-The following configurations need to be added to the `/etc/security/limits.conf` file for non-root users:
+First, the following configurations need to be added to the `/etc/security/limits.conf` file for regular users:
 
-```
+```bash
 *    -   rtprio   98
 ```
+
+​​Second, to increase the per-socket receive buffer size, add the following configurations to `/etc/sysctl.conf` and apply them immediately with `sudo sysctl -p`:​
+
+```bash
+net.core.rmem_max=20971520  
+net.core.rmem_default=20971520  
+net.core.wmem_max=20971520  
+net.core.wmem_default=20971520  
+```
+
 
 ### 2. Compiler & Toolchain
 
 - GCC version ≥ 11.4 (for Linux)
-- CMake ≥ 3.18
+- CMake ≥ 3.16
 - Make build system
 
 ### 3. Programming Language
@@ -34,12 +42,13 @@ You must install the following libraries/packages before building or using the S
 
 #### System Libraries
 
-- `libfmt-dev`
-- `libspdlog-dev`
+- `libcap-dev`
+- `libdw-dev`
+- `libacl1-dev`
 
 Shell command:
 ```Bash
-sudo apt install -y libspdlog-dev libfmt-dev
+sudo apt install -y libcap-dev libdw-dev libacl1-dev
 ```
 
 ## Build examples

@@ -6,9 +6,9 @@
 
 #include <iostream>
 
-using namespace magic::robot;
+using namespace magic::gen1;
 
-magic::robot::MagicRobot robot;
+magic::gen1::MagicRobot robot;
 
 void signalHandler(int signum) {
   std::cout << "Interrupt signal (" << signum << ") received.\n";
@@ -67,7 +67,7 @@ int main() {
     // TODO: handle lidar point cloud data
   });
 
-  usleep(50000000);
+  usleep(20000000);
 
   // 关闭lidar
   status = controller.CloseLidar();

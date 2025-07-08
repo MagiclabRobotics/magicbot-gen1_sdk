@@ -14,7 +14,7 @@
 #include "magic_sensor.h"
 #include "magic_state_monitor.h"
 
-namespace magic::robot {
+namespace magic::gen1 {
 using namespace motion;
 using namespace sensor;
 using namespace audio;
@@ -121,4 +121,4 @@ class MAGIC_EXPORT_API MagicRobot final : public NonCopyable {
  private:
   std::atomic_bool is_shutdown_{true};  // 标记是否已初始化
 };
-}  // namespace magic::robot
+}  // namespace magic::gen1

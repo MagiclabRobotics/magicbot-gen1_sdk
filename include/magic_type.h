@@ -5,7 +5,7 @@
 #include <string>
 #include <vector>
 
-namespace magic::robot {
+namespace magic::gen1 {
 
 /************************************************************
  *                        常量信息                           *
@@ -471,6 +471,15 @@ struct TrinocularCameraFrame {
   std::vector<uint8_t> imgfr_array;  ///< 右目图像数据
 };
 
+/**
+ * @brief 音频流数据结构
+ */
+struct AudioStream {
+  // 音频数据
+  int32_t data_length;            // 音频数据实际长度（字节）
+  std::vector<uint8_t> raw_data;  // 音频数据
+};
+
 class NonCopyable {
  protected:
   NonCopyable() = default;
@@ -481,4 +490,4 @@ class NonCopyable {
   NonCopyable& operator=(const NonCopyable&) = delete;
 };
 
-}  // namespace magic::robot
+}  // namespace magic::gen1
