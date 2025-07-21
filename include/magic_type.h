@@ -197,21 +197,21 @@ enum class GaitMode : int32_t {
  * @brief 人形机器人动作指令枚举（对应动作ID）
  */
 enum class TrickAction : int32_t {
-  ACTION_NONE = 0,                      //无特技, 默认
-  ACTION_RECOVERY_STAND = 103,          // 恢复站立
-  ACTION_CELEBRATE = 201,               // 庆祝
-  ACTION_SHAKE_HAND_REACHOUT = 217,     // 握手 - 伸出
-  ACTION_SHAKE_WITH_DRAW = 218,         // 握手 - 撤回
-  ACTION_NOD = 219,                     // 点头
-  ACTION_SHAKE = 220,                   // 摇头
-  ACTION_CIRCLE_HEAD = 221,             // 摇头晃脑
-  ACTION_GTEETING = 301,                // 打招呼
-  ACTION_POINT_GROUND = 302,            // 指地 -  伸出
-  ACTION_POINT_GROUND_WITH_DRAW = 303,  // 指定 - 撤回
-  ACTION_SPREAD_HAND = 304,             // 张手 - 伸出
-  ACTION_SPREAD_HAND_WITH_DRAW = 305,   // 张手 - 撤回
-  ACTION_TURN_AWAY = 306,               // 扭身朝后
-  ACTION_TURN_BACK = 307,               // 扭身朝前
+  ACTION_NONE = 0,                        //无特技, 默认
+  ACTION_RECOVERY_STAND = 103,            // 恢复站立
+  ACTION_CELEBRATE = 201,                 // 庆祝
+  ACTION_SHAKE_HAND_REACHOUT = 217,       // 握手 - 伸出
+  ACTION_SHAKE_HAND_WITHDRAW = 218,       // 握手 - 撤回
+  ACTION_NOD_HEAD = 219,                  // 点头
+  ACTION_SHAKE_HEAD = 220,                // 摇头
+  ACTION_CIRCLE_HEAD = 221,               // 摇头晃脑
+  ACTION_GTEETING = 301,                  // 打招呼
+  ACTION_POINT_GROUND = 302,              // 指地 -  伸出
+  ACTION_POINT_GROUND_WITH_DRAW = 303,    // 指定 - 撤回
+  ACTION_SPREAD_HAND = 304,               // 张手 - 伸出
+  ACTION_SPREAD_HAND_WITH_DRAW = 305,     // 张手 - 撤回
+  ACTION_TRUN_AWAY_LEFT_INTRODUCE = 306,  // 扭身介绍-朝后
+  ACTION_TRUN_BACK_LEFT_INTRODUCE = 307,  // 扭身介绍-撤回
 };
 
 /**
