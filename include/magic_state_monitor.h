@@ -14,43 +14,43 @@ using StateMonitorPtr = std::unique_ptr<StateMonitor>;
 
 /**
  * @class StateMonitor
- * @brief 封装状态控制功能的类，提供状态查询等接口。
+ * @brief Class that encapsulates state control functionality, providing state query and other interfaces.
  *
- * 该类通常用于控制机器人或智能设备的状态管理，支持状态查询与初始化，
- * 并提供资源释放机制。
+ * This class is typically used for state management of robots or smart devices, supporting state query and initialization,
+ * and providing resource release mechanisms.
  */
 
 class MAGIC_EXPORT_API StateMonitor final : public NonCopyable {
  public:
   /**
-   * @brief 构造函数，创建 StateMonitor 实例。
+   * @brief Constructor, creates a StateMonitor instance.
    */
   StateMonitor();
 
   /**
-   * @brief 析构函数，释放 StateMonitor 实例资源。
+   * @brief Destructor, releases StateMonitor instance resources.
    */
   ~StateMonitor();
 
   /**
-   * @brief 初始化状态控制器。
-   * @return 是否初始化成功。
+   * @brief Initialize state controller.
+   * @return Whether initialization was successful.
    */
   bool Initialize();
 
   /**
-   * @brief 释放资源，清理状态控制器。
+   * @brief Release resources, clean up state controller.
    */
   void Shutdown();
 
   /**
-   * @brief 获取当前机器人运行状态（聚合的状态信息）。
-   * @return robot_state 用于接收机器人当前状态。
+   * @brief Get current robot running state (aggregated state information).
+   * @return robot_state for receiving current robot state.
    */
   RobotState GetCurrentState() const;
 
  private:
-  std::atomic_bool is_shutdown_{true};  // 标记是否已初始化
+  std::atomic_bool is_shutdown_{true};  // Flag indicating whether initialized
 };
 
 }  // namespace magic::gen1::monitor

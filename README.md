@@ -25,31 +25,17 @@ net.core.wmem_max=20971520
 net.core.wmem_default=20971520  
 ```
 
-
 ### 2. Compiler & Toolchain
 
 - GCC version ≥ 11.4 (for Linux)
 - CMake ≥ 3.16
 - Make build system
+- Eigen3
 
 ### 3. Programming Language
 
 - C++20 (minimum)
-
-### 4. Required Dependencies
-
-You must install the following libraries/packages before building or using the SDK.
-
-#### System Libraries
-
-- `libcap-dev`
-- `libdw-dev`
-- `libacl1-dev`
-
-Shell command:
-```Bash
-sudo apt install -y libcap-dev libdw-dev libacl1-dev
-```
+- python3.10
 
 ## Build examples
 To build the examples inside this reposity:
@@ -75,6 +61,8 @@ Enter doc/build/html directory, and open `index.html`
 
 ## Installation
 
+### C++ SDK Installation
+
 To build your own application with this SDK, you can install the magicbot_gen1_sdk to specified directory:
 ```
   mkdir build
@@ -83,7 +71,8 @@ To build your own application with this SDK, you can install the magicbot_gen1_s
   make -j8
   sudo make install
 ```
-You can refer to example/cmake_sample on how to import the `magicbot_gen1_sdk` into your CMake project.
+
+You can refer to example/cpp/cmake_sample on how to import the `magicbot_gen1_sdk` into your CMake project:
 ```
   cd example/cmake_example
   mkdir build
@@ -91,9 +80,26 @@ You can refer to example/cmake_sample on how to import the `magicbot_gen1_sdk` i
   cmake .. -DCMAKE_PREFIX_PATH=/opt/magic_robotics/magicbot_gen1_sdk
   make -j8
 ```
+
 Note that the path specified by -DCMAKE_PREFIX_PATH must be the same as the installation directory used above.
+
+### Python SDK Installation
+
+The Python bindings are automatically installed when you build the SDK. After building, you can use the Python SDK by setting the appropriate environment variables:
+
+```bash
+# Set up environment variables for Python SDK
+export PYTHONPATH=/opt/magic_robotics/magicbot_gen1_sdk/lib:$PYTHONPATH
+export LD_LIBRARY_PATH=/opt/magic_robotics/magicbot_gen1_sdk/lib:$LD_LIBRARY_PATH
+```
+
+You can also add these environment variables to your shell profile (e.g., `~/.bashrc`) for permanent setup.
 
 ## Notice
 
-For more reference information, please go to [MagicRobotics](https://github.com/MagiclabRobotics)
+- The Python SDK provides the same functionality as the C++ SDK with a more Pythonic interface
+- All Python examples are located in the `example/python/` directory
+- Make sure to set the correct environment variables (`PYTHONPATH` and `LD_LIBRARY_PATH`) when using the Python SDK
+- The Python bindings are automatically generated during the build process
 
+For more reference information, please go to [MagicRobotics](https://github.com/MagiclabRobotics)

@@ -1,4 +1,3 @@
-
 if(CMAKE_VERSION VERSION_LESS 3.18)
   message(FATAL_ERROR "CMake should be 3.18 or greater.")
 endif()
@@ -28,7 +27,10 @@ if("${_targetsDefined}" STREQUAL "${_expectedTargets}")
 endif()
 
 if(NOT "${_targetsDefined}" STREQUAL "")
-  message(FATAL_ERROR "The following targets were already defined in this export set: ${_targetsDefined}")
+  message(
+    FATAL_ERROR
+      "The following targets were already defined in this export set: ${_targetsDefined}"
+  )
 endif()
 
 unset(_targetsDefined)
@@ -43,7 +45,6 @@ get_filename_component(_IMPORT_PREFIX "${_IMPORT_PREFIX}" PATH)
 get_filename_component(_IMPORT_PREFIX "${_IMPORT_PREFIX}" PATH)
 get_filename_component(_IMPORT_PREFIX "${_IMPORT_PREFIX}" PATH)
 
-
 if(_IMPORT_PREFIX STREQUAL "/")
   set(_IMPORT_PREFIX "")
 endif()
@@ -51,19 +52,22 @@ endif()
 add_library(magicbot_gen1_sdk SHARED IMPORTED GLOBAL)
 add_library(magicbot::gen1_sdk ALIAS magicbot_gen1_sdk)
 
-set_target_properties(magicbot_gen1_sdk PROPERTIES
-    IMPORTED_LOCATION "${_IMPORT_PREFIX}/lib/libmagic_sdk.so"
-    INTERFACE_INCLUDE_DIRECTORIES "${_IMPORT_PREFIX}/include"
-    LINKER_LANGUAGE CXX
-)
+set_target_properties(
+  magicbot_gen1_sdk
+  PROPERTIES IMPORTED_LOCATION "${_IMPORT_PREFIX}/lib/libmagicbot_gen1_sdk.so"
+             INTERFACE_INCLUDE_DIRECTORIES "${_IMPORT_PREFIX}/include"
+             LINKER_LANGUAGE CXX)
 
 list(APPEND _IMPORT_CHECK_TARGETS magicbot_gen1_sdk)
-list(APPEND _IMPORT_CHECK_FILES_FOR_magicbot_gen1_sdk "${_IMPORT_PREFIX}/lib/libmagic_sdk.so")
+list(APPEND _IMPORT_CHECK_FILES_FOR_magicbot_gen1_sdk
+     "${_IMPORT_PREFIX}/lib/libmagicbot_gen1_sdk.so")
 
 foreach(target IN LISTS _IMPORT_CHECK_TARGETS)
   foreach(file IN LISTS _IMPORT_CHECK_FILES_FOR_${target})
     if(NOT EXISTS "${file}")
-      message(FATAL_ERROR "The imported target \"${target}\" references the file
+      message(
+        FATAL_ERROR
+          "The imported target \"${target}\" references the file
   \"${file}\"
 but this file does not exist. Possible reasons include:
   * The file was deleted, renamed, or moved

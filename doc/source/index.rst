@@ -17,14 +17,25 @@ Welcome to MagicSDK's documentation!
 
 .. toctree::
    :maxdepth: 2
-   :caption: Contents:
+   :caption: C++ APIs:
    
-   service/1.robot_reference
-   service/2.high_level_motion_reference
-   service/3.low_level_motion_reference
-   service/4.sensor_reference
-   service/5.audio_reference
-   service/6.monitor_reference
+   cpp_api/1.robot_reference
+   cpp_api/2.high_level_motion_reference
+   cpp_api/3.low_level_motion_reference
+   cpp_api/4.sensor_reference
+   cpp_api/5.audio_reference
+   cpp_api/6.monitor_reference
+
+.. toctree::   
+   :maxdepth: 2
+   :caption: Python APIs:
+
+   python_api/1.robot_reference
+   python_api/2.high_level_motion_reference
+   python_api/3.low_level_motion_reference
+   python_api/4.sensor_reference
+   python_api/5.audio_reference
+   python_api/6.monitor_reference
 
 .. toctree::
    :maxdepth: 2

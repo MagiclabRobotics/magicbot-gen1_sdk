@@ -22,103 +22,103 @@ using namespace monitor;
 
 /**
  * @class MagicRobot
- * @brief 提供对机器人系统的统一管理接口，包括初始化、连接管理、各子控制器的访问等。
+ * @brief Provides a unified management interface for the robot system, including initialization, connection management, access to various sub-controllers, etc.
  *
- * 该类是机器人系统的核心入口，负责初始化资源、管理通信连接、获取机器人状态，
- * 并向外部提供访问高层/低层控制器、音频控制器、传感器控制器的统一接口。
+ * This class is the core entry point of the robot system, responsible for initializing resources, managing communication connections, obtaining robot status,
+ * and providing external access to high-level/low-level controllers, audio controllers, and sensor controllers through a unified interface.
  */
 class MAGIC_EXPORT_API MagicRobot final : public NonCopyable {
  public:
   /**
-   * @brief 构造函数，创建 MagicRobot 实例。
+   * @brief Constructor, creates a MagicRobot instance.
    */
   MagicRobot();
 
   /**
-   * @brief 析构函数，释放 MagicRobot 实例资源。
+   * @brief Destructor, releases MagicRobot instance resources.
    */
   ~MagicRobot();
 
   /**
-   * @brief 初始化机器人系统，包括控制器、网络等子模块。
-   * @param local_ip 本地IP地址，用于通信绑定或身份标识。
-   * @return 初始化是否成功。
+   * @brief Initialize the robot system, including controllers, network and other sub-modules.
+   * @param local_ip Local IP address for communication binding or identity identification.
+   * @return Whether initialization was successful.
    */
   bool Initialize(const std::string& local_ip);
 
   /**
-   * @brief 关闭机器人系统，释放资源。
+   * @brief Shutdown the robot system and release resources.
    */
   void Shutdown();
 
   /**
-   * @brief 与机器人服务建立通信连接。
-   * @return gRPC调用状态，成功返回 Status::OK。
+   * @brief Establish communication connection with robot service.
+   * @return gRPC call status, returns Status::OK on success.
    */
   Status Connect();
 
   /**
-   * @brief 断开与机器人服务的连接。
-   * @return gRPC调用状态。
+   * @brief Disconnect from robot service.
+   * @return gRPC call status.
    */
   Status Disconnect();
 
   /**
-   * @brief 获取SDK版本号。
-   * @return 当前SDK的版本字符串，例如 "1.2.3"。
+   * @brief Get SDK version number.
+   * @return Current SDK version string, e.g. "1.2.3".
    */
   std::string GetSDKVersion() const;
 
   /**
-   * @brief 设置接口调用的超时时间。
-   * @param timeout 超时时间，单位为毫秒。默认超时时间为5000毫秒。
+   * @brief Set timeout for interface calls.
+   * @param timeout Timeout time in milliseconds. Default timeout is 5000ms.
    */
   void SetTimeout(int timeout);
 
   /**
-   * @brief 获取当前运动控制级别。
-   * @return 当前控制模式（高层控制或低层控制）。
+   * @brief Get current motion control level.
+   * @return Current control mode (high-level control or low-level control).
    */
   ControllerLevel GetMotionControlLevel();
 
   /**
-   * @brief 设置运动控制级别（高层或低层）。
-   * @param level 枚举类型的控制级别。
-   * @return 设置结果状态。
+   * @brief Set motion control level (high-level or low-level).
+   * @param level Enum type control level.
+   * @return Setting result status.
    */
   Status SetMotionControlLevel(ControllerLevel level);
 
   /**
-   * @brief 获取高层运动控制器对象。
-   * @return 引用类型，供用户调用高层运动控制接口。
+   * @brief Get high-level motion controller object.
+   * @return Reference type for users to call high-level motion control interfaces.
    */
   HighLevelMotionController& GetHighLevelMotionController();
 
   /**
-   * @brief 获取低层运动控制器对象。
-   * @return 引用类型，供用户控制具体关节/部件。
+   * @brief Get low-level motion controller object.
+   * @return Reference type for users to control specific joints/components.
    */
   LowLevelMotionController& GetLowLevelMotionController();
 
   /**
-   * @brief 获取音频控制器对象。
-   * @return 引用类型，可用于播放语音、调节音量等。
+   * @brief Get audio controller object.
+   * @return Reference type for playing speech, adjusting volume, etc.
    */
   AudioController& GetAudioController();
 
   /**
-   * @brief 获取传感器控制器对象。
-   * @return 引用类型，用于访问电量、IMU、摄像头等传感器数据。
+   * @brief Get sensor controller object.
+   * @return Reference type for accessing battery, IMU, camera and other sensor data.
    */
   SensorController& GetSensorController();
 
   /**
-   * @brief 获取状态监控器对象。
-   * @return 引用类型，用于获取机器人当前状态信息。
+   * @brief Get state monitor object.
+   * @return Reference type for obtaining current robot status information.
    */
   StateMonitor& GetStateMonitor();
 
  private:
-  std::atomic_bool is_shutdown_{true};  // 标记是否已初始化
+  std::atomic_bool is_shutdown_{true};  // Flag indicating whether initialized
 };
 }  // namespace magic::gen1

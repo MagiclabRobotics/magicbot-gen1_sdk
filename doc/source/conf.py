@@ -18,8 +18,8 @@ import sphinx_rtd_theme
 # -- Project information -----------------------------------------------------
 
 project = 'MagicSDK'
-copyright = '2025, magiclab'
-author = 'magiclab'
+copyright = '2025, xujiaqi'
+author = 'xujiaqi'
 
 # The full version, including alpha/beta/rc tags
 release = '0.0.1'
