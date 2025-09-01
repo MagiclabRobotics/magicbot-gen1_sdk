@@ -26,7 +26,10 @@ def signal_handler(signum, frame):
     logging.info("Received interrupt signal (%s), exiting...", signum)
     if robot:
         robot.disconnect()
+        logging.info("Robot disconnected")
         robot.shutdown()
+        logging.info("Robot shutdown")
+    exit(-1)
 
 
 def main():
@@ -96,6 +99,10 @@ def main():
     finally:
         # Clean up resources
         try:
+            logging.info("Clean up resources")
+            # Close state monitor
+            monitor = robot.get_state_monitor()
+            monitor.shutdown()
             # Disconnect
             robot.disconnect()
             logging.info("Robot connection disconnected")

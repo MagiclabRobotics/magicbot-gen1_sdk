@@ -28,7 +28,10 @@ def signal_handler(signum, frame):
     running = False
     if robot:
         robot.disconnect()
+        logging.info("Robot disconnected")
         robot.shutdown()
+        logging.info("Robot shutdown")
+    exit(-1)
 
 
 def print_help():
@@ -197,7 +200,7 @@ def subscribe_audio_stream():
             nonlocal origin_counter
             if origin_counter % 30 == 0:
                 logging.info(
-                    "Received original audio stream data, size: %s",
+                    "Received original audio stream data, size: %d",
                     audio_stream.data_length,
                 )
             origin_counter += 1
@@ -207,7 +210,7 @@ def subscribe_audio_stream():
             nonlocal bf_counter
             if bf_counter % 30 == 0:
                 logging.info(
-                    "Received BF audio stream data, size: %s", audio_stream.data_length
+                    "Received BF audio stream data, size: %d", audio_stream.data_length
                 )
             bf_counter += 1
 
@@ -328,6 +331,7 @@ def main():
     finally:
         # Clean up resources
         try:
+            logging.info("Clean up resources")
             # Close sensor controller
             audio_controller = robot.get_audio_controller()
             audio_controller.shutdown()

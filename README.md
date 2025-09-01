@@ -67,7 +67,7 @@ To build your own application with this SDK, you can install the magicbot_gen1_s
 ```
   mkdir build
   cd build
-  cmake .. -DCMAKE_INSTALL_PREFIX=/opt/magic_robotics/magicbot_gen1_sdk
+  cmake .. -DCMAKE_INSTALL_PREFIX=/opt/magic_robotics/magic_gen1_sdk
   make -j8
   sudo make install
 ```
@@ -77,7 +77,7 @@ You can refer to example/cpp/cmake_sample on how to import the `magicbot_gen1_sd
   cd example/cmake_example
   mkdir build
   cd build
-  cmake .. -DCMAKE_PREFIX_PATH=/opt/magic_robotics/magicbot_gen1_sdk
+  cmake .. -DCMAKE_PREFIX_PATH=/opt/magic_robotics/magic_gen1_sdk
   make -j8
 ```
 
@@ -89,8 +89,8 @@ The Python bindings are automatically installed when you build the SDK. After bu
 
 ```bash
 # Set up environment variables for Python SDK
-export PYTHONPATH=/opt/magic_robotics/magicbot_gen1_sdk/lib:$PYTHONPATH
-export LD_LIBRARY_PATH=/opt/magic_robotics/magicbot_gen1_sdk/lib:$LD_LIBRARY_PATH
+export PYTHONPATH=/opt/magic_robotics/magic_gen1_sdk/lib:$PYTHONPATH
+export LD_LIBRARY_PATH=/opt/magic_robotics/magic_gen1_sdk/lib:$LD_LIBRARY_PATH
 ```
 
 You can also add these environment variables to your shell profile (e.g., `~/.bashrc`) for permanent setup.

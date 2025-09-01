@@ -26,7 +26,10 @@ def signal_handler(signum, frame):
     logging.info(f"Received interrupt signal ({signum}), exiting...")
     if robot:
         robot.disconnect()
+        logging.info("Robot disconnected")
         robot.shutdown()
+        logging.info("Robot shutdown")
+    exit(-1)
 
 
 imu_counter = 0
@@ -36,12 +39,22 @@ def lidar_imu_callback(imu_data):
     """LiDAR IMU data callback function"""
     global imu_counter
     imu_counter += 1
-    logging.info(
-        "Received LiDAR IMU data, counter: %d, timestamp: %d",
-        imu_counter,
-        imu_data.get_timestamp(),
-    )
-    # TODO: Process LiDAR IMU data
+    if imu_counter % 100 == 0:
+        logging.info("+++++++++++++ Received LiDAR IMU data")
+        logging.info(
+            "Received LiDAR IMU data, counter: %d, timestamp: %d",
+            imu_counter,
+            imu_data.timestamp,
+        )
+        logging.info("Received LiDAR IMU data, orientation: %s", imu_data.orientation)
+        logging.info(
+            "Received LiDAR IMU data, angular_velocity: %s", imu_data.angular_velocity
+        )
+        logging.info(
+            "Received LiDAR IMU data, linear_acceleration: %s",
+            imu_data.linear_acceleration,
+        )
+        logging.info("Received LiDAR IMU data, temperature: %s", imu_data.temperature)
 
 
 point_cloud_counter = 0
@@ -52,7 +65,6 @@ def lidar_point_cloud_callback(point_cloud_data):
     global point_cloud_counter
     point_cloud_counter += 1
     logging.info("Received LiDAR point cloud data, counter: %d", point_cloud_counter)
-    # TODO: Process LiDAR point cloud data
 
 
 def main():
@@ -113,7 +125,7 @@ def main():
         logging.info("Subscribed to LiDAR point cloud data")
 
         # Wait 20 seconds to receive data
-        logging.info("Waiting 2000 seconds to receive sensor data...")
+        logging.info("Waiting 20 seconds to receive sensor data...")
         time.sleep(20)
 
         # Close LiDAR
@@ -138,6 +150,7 @@ def main():
     finally:
         # Clean up resources
         try:
+            logging.info("Clean up resources")
             # Close sensor controller
             sensor_controller = robot.get_sensor_controller()
             sensor_controller.shutdown()

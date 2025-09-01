@@ -15,7 +15,6 @@ logging.basicConfig(
     datefmt="%Y-%m-%d %H:%M:%S",
 )
 
-
 # Global variables
 robot: Optional[magicbot.MagicRobot] = None
 running = True
@@ -28,7 +27,10 @@ def signal_handler(signum, frame):
     running = False
     if robot:
         robot.disconnect()
+        logging.info("Robot disconnected")
         robot.shutdown()
+        logging.info("Robot shutdown")
+    exit(-1)
 
 
 def print_help():
@@ -44,13 +46,9 @@ def print_help():
     logging.info("  a        Function 5: Move left")
     logging.info("  s        Function 6: Move backward")
     logging.info("  d        Function 7: Move right")
+    logging.info("  x        Function 7: stop move")
     logging.info("  t        Function 8: Turn left")
     logging.info("  g        Function 9: Turn right")
-    logging.info("  4        Function 10: Get current gait")
-    logging.info("  5        Function 11: Execute handshake action")
-    logging.info("  6        Function 12: Execute nod action")
-    logging.info("  7        Function 13: Execute shake head action")
-    logging.info("  8        Function 14: Execute greeting action")
 
 
 def get_user_input():
@@ -154,160 +152,6 @@ def execute_trick_celebrate():
         return False
 
 
-def execute_trick_handshake():
-    """Execute trick - handshake action"""
-    global robot
-    try:
-        logging.info("=== Executing Trick - Handshake Action ===")
-
-        # Get high-level motion controller
-        controller = robot.get_high_level_motion_controller()
-
-        # Execute handshake trick
-        status = controller.execute_trick(
-            magicbot.TrickAction.ACTION_SHAKE_HAND_REACHOUT
-        )
-        if status.code != magicbot.ErrorCode.OK:
-            logging.error(
-                "Failed to execute robot trick, code: %s, message: %s",
-                status.code,
-                status.message,
-            )
-            return False
-
-        logging.info("Robot handshake trick executed successfully")
-        return True
-
-    except Exception as e:
-        logging.error("Exception occurred while executing trick: %s", e)
-        return False
-
-
-def execute_trick_nod():
-    """Execute trick - nod action"""
-    global robot
-    try:
-        logging.info("=== Executing Trick - Nod Action ===")
-
-        # Get high-level motion controller
-        controller = robot.get_high_level_motion_controller()
-
-        # Execute nod trick
-        status = controller.execute_trick(magicbot.TrickAction.ACTION_NOD_HEAD)
-        if status.code != magicbot.ErrorCode.OK:
-            logging.error(
-                "Failed to execute robot trick, code: %s, message: %s",
-                status.code,
-                status.message,
-            )
-            return False
-
-        logging.info("Robot nod trick executed successfully")
-        return True
-
-    except Exception as e:
-        logging.error("Exception occurred while executing trick: %s", e)
-        return False
-
-
-def execute_trick_shake_head():
-    """Execute trick - shake head action"""
-    global robot
-    try:
-        logging.info("=== Executing Trick - Shake Head Action ===")
-
-        # Get high-level motion controller
-        controller = robot.get_high_level_motion_controller()
-
-        # Execute shake head trick
-        status = controller.execute_trick(magicbot.TrickAction.ACTION_SHAKE_HEAD)
-        if status.code != magicbot.ErrorCode.OK:
-            logging.error(
-                "Failed to execute robot trick, code: %s, message: %s",
-                status.code,
-                status.message,
-            )
-            return False
-
-        logging.info("Robot shake head trick executed successfully")
-        return True
-
-    except Exception as e:
-        logging.error("Exception occurred while executing trick: %s", e)
-        return False
-
-
-def execute_trick_greeting():
-    """Execute trick - greeting action"""
-    global robot
-    try:
-        logging.info("=== Executing Trick - Greeting Action ===")
-
-        # Get high-level motion controller
-        controller = robot.get_high_level_motion_controller()
-
-        # Execute greeting trick
-        status = controller.execute_trick(magicbot.TrickAction.ACTION_GTEETING)
-        if status.code != magicbot.ErrorCode.OK:
-            logging.error(
-                "Failed to execute robot trick, code: %s, message: %s",
-                status.code,
-                status.message,
-            )
-            return False
-
-        logging.info("Robot greeting trick executed successfully")
-        return True
-
-    except Exception as e:
-        logging.error("Exception occurred while executing trick: %s", e)
-        return False
-
-
-def get_current_gait():
-    """Get current gait"""
-    global robot
-    try:
-        logging.info("=== Getting Current Gait ===")
-
-        # Get high-level motion controller
-        controller = robot.get_high_level_motion_controller()
-
-        # Get current gait
-        status, gait_mode = controller.get_gait()
-        if status.code != magicbot.ErrorCode.OK:
-            logging.error(
-                "Failed to get robot gait, code: %s, message: %s",
-                status.code,
-                status.message,
-            )
-            return False
-
-        # Get gait names
-        gait_names = {
-            magicbot.GaitMode.GAIT_PASSIVE: "Idle mode",
-            magicbot.GaitMode.GAIT_RECOVERY_STAND: "Recovery stand",
-            magicbot.GaitMode.GAIT_CLASSIC_WALK: "Classic walk",
-            magicbot.GaitMode.GAIT_PURE_DAMPER: "Damping mode",
-            magicbot.GaitMode.GAIT_HUMANOID_WALK: "Humanoid walk",
-            magicbot.GaitMode.GAIT_ALL_TERRAIN_WALK: "All-terrain walk",
-            magicbot.GaitMode.GAIT_FAST_WALK: "Fast walk",
-            magicbot.GaitMode.GAIT_SQUAT: "Squat",
-            magicbot.GaitMode.GAIT_BALANCE_STAND: "Balance stand (supports movement)",
-            magicbot.GaitMode.GAIT_ARM_SWING_WALK: "Arm swing walk",
-            magicbot.GaitMode.GAIT_HUMANOID_RUN: "Humanoid run",
-            magicbot.GaitMode.GAIT_LOWLEVL_SDK: "Low-level SDK mode",
-        }
-
-        gait_name = gait_names.get(gait_mode, f"Unknown gait({gait_mode})")
-        logging.info("Current gait: %s", gait_name)
-        return True
-
-    except Exception as e:
-        logging.error("Exception occurred while getting current gait: %s", e)
-        return False
-
-
 def joystick_command(left_x_axis, left_y_axis, right_x_axis, right_y_axis):
     """Send joystick control command"""
     global robot
@@ -378,6 +222,12 @@ def turn_right():
     return joystick_command(0.0, 0.0, 1.0, 0.0)
 
 
+def stop_move():
+    """Stop Move"""
+    logging.info("=== Stop Move ===")
+    return joystick_command(0.0, 0.0, 0.0, 0.0)
+
+
 def demo_all_high_level_functions():
     """Demo all high-level motion control functions"""
     logging.info("=== Demo All High-Level Motion Control Functions ===")
@@ -395,25 +245,10 @@ def demo_all_high_level_functions():
         success_count += 1
         time.sleep(2)
 
-    # Test get current gait
-    if get_current_gait():
-        success_count += 1
-        time.sleep(1)
-
     # Test celebrate trick
     if execute_trick_celebrate():
         success_count += 1
         time.sleep(3)
-
-    # Test handshake trick
-    if execute_trick_handshake():
-        success_count += 1
-        time.sleep(3)
-
-    # Test nod trick
-    if execute_trick_nod():
-        success_count += 1
-        time.sleep(2)
 
     logging.info(
         "High-level motion control function test completed: %s/%s functions tested successfully",
@@ -501,16 +336,6 @@ def main():
                     balance_stand()
                 elif key == "3":
                     execute_trick_celebrate()
-                elif key == "4":
-                    get_current_gait()
-                elif key == "5":
-                    execute_trick_handshake()
-                elif key == "6":
-                    execute_trick_nod()
-                elif key == "7":
-                    execute_trick_shake_head()
-                elif key == "8":
-                    execute_trick_greeting()
                 elif key == "w":
                     move_forward()
                 elif key == "a":
@@ -519,6 +344,8 @@ def main():
                     move_backward()
                 elif key == "d":
                     move_right()
+                elif key == "x":
+                    stop_move()
                 elif key == "t":
                     turn_left()
                 elif key == "g":
@@ -542,6 +369,7 @@ def main():
     finally:
         # Clean up resources
         try:
+            logging.info("Clean up resources")
             # Close high-level motion controller
             controller = robot.get_high_level_motion_controller()
             controller.shutdown()

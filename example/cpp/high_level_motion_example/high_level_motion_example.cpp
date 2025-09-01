@@ -14,43 +14,44 @@ void signalHandler(int signum) {
   std::cout << "Interrupt signal (" << signum << ") received.\n";
 
   robot.Shutdown();
-  // Exit process
+  // 退出进程
   exit(signum);
 }
 
 void print_help(const char* prog_name) {
-  std::cout << "Key Function Demo Program\n\n";
-  std::cout << "Usage: " << prog_name << "\n";
-  std::cout << "Key Function Description:\n";
-  std::cout << "  ESC      Exit program\n";
-  std::cout << "  1        Function 1: Recovery stand\n";
-  std::cout << "  2        Function 2: Balance stand\n";
-  std::cout << "  3        Function 3: Execute trick - celebrate action\n";
-  std::cout << "  w        Function 4: Move forward\n";
-  std::cout << "  a        Function 5: Move left\n";
-  std::cout << "  s        Function 6: Move backward\n";
-  std::cout << "  d        Function 7: Move right\n";
-  std::cout << "  t        Function 8: Turn left\n";
-  std::cout << "  g        Function 9: Turn right\n";
+  std::cout << "按键功能演示程序\n\n";
+  std::cout << "用法: " << prog_name << "\n";
+  std::cout << "按键功能说明:\n";
+  std::cout << "  ESC      退出程序\n";
+  std::cout << "  1        功能1:锁定站立\n";
+  std::cout << "  2        功能2:平衡站立\n";
+  std::cout << "  3        功能3:执行特技-庆祝动作\n";
+  std::cout << "  w        功能4:向前移动\n";
+  std::cout << "  a        功能5:向左移动\n";
+  std::cout << "  s        功能6:向后移动\n";
+  std::cout << "  d        功能7:向右移动\n";
+  std::cout << "  x        功能8:向右移动\n";
+  std::cout << "  t        功能9:左转向\n";
+  std::cout << "  g        功能10:右转向\n";
 }
 
 int getch() {
   struct termios oldt, newt;
   int ch;
-  tcgetattr(STDIN_FILENO, &oldt);  // Get current terminal settings
+  tcgetattr(STDIN_FILENO, &oldt);  // 获取当前终端设置
   newt = oldt;
-  newt.c_lflag &= ~(ICANON | ECHO);  // Disable buffering and echo
+  newt.c_lflag &= ~(ICANON | ECHO);  // 关闭缓冲和回显
   tcsetattr(STDIN_FILENO, TCSANOW, &newt);
-  ch = getchar();                           // Read key press
-  tcsetattr(STDIN_FILENO, TCSANOW, &oldt);  // Restore settings
+  ch = getchar();                           // 读取按键
+  tcsetattr(STDIN_FILENO, TCSANOW, &oldt);  // 恢复设置
   return ch;
 }
 
 void RecoveryStand() {
-  // Get high-level motion controller
+  // 获取高层运控控制器
   auto& controller = robot.GetHighLevelMotionController();
 
-  // Set gait
+  // 设置步态
   auto status = controller.SetGait(GaitMode::GAIT_RECOVERY_STAND);
   if (status.code != ErrorCode::OK) {
     std::cerr << "set robot gait failed"
@@ -61,10 +62,10 @@ void RecoveryStand() {
 }
 
 void BalanceStand() {
-  // Get high-level motion controller
+  // 获取高层运控控制器
   auto& controller = robot.GetHighLevelMotionController();
 
-  // Set balance stand gait
+  // 设置姿态展示步态
   auto status = controller.SetGait(GaitMode::GAIT_BALANCE_STAND);
   if (status.code != ErrorCode::OK) {
     std::cerr << "set robot gait failed"
@@ -76,10 +77,10 @@ void BalanceStand() {
 }
 
 void ExecuteTrick() {
-  // Get high-level motion controller
+  // 获取高层运控控制器
   auto& controller = robot.GetHighLevelMotionController();
 
-  // Execute trick
+  // 执行特技
   auto status = controller.ExecuteTrick(TrickAction::ACTION_CELEBRATE);
   if (status.code != ErrorCode::OK) {
     std::cerr << "execute robot trick failed"
@@ -94,7 +95,7 @@ void JoyStickCommand(float left_x_axis,
                      float left_y_axis,
                      float right_x_axis,
                      float right_y_axis) {
-  // Get high-level motion controller
+  // 获取高层运控控制器
   auto& controller = robot.GetHighLevelMotionController();
 
   JoystickCommand joy_command;
@@ -110,28 +111,26 @@ void JoyStickCommand(float left_x_axis,
     usleep(50000);
     return;
   }
-  // Wait 50ms
+  // 等待50ms
   usleep(50000);
 }
 
 int main(int argc, char* argv[]) {
-  // Bind SIGINT (Ctrl+C)
+  // 绑定 SIGINT（Ctrl+C）
   signal(SIGINT, signalHandler);
 
-  print_help(argv[0]);
-
   std::string local_ip = "192.168.54.111";
-  // Configure local IP address for direct network connection and initialize SDK
+  // 配置本机网线直连机器的IP地址，并进行SDK初始化
   if (!robot.Initialize(local_ip)) {
     std::cerr << "robot sdk initialize failed." << std::endl;
     robot.Shutdown();
     return -1;
   }
 
-  // Set RPC timeout to 5s
+  // 设置rpc超时时间为5s
   robot.SetTimeout(5000);
 
-  // Connect to robot
+  // 连接机器人
   auto status = robot.Connect();
   if (status.code != ErrorCode::OK) {
     std::cerr << "connect robot failed"
@@ -141,7 +140,7 @@ int main(int argc, char* argv[]) {
     return -1;
   }
 
-  // Switch motion control controller to high-level controller, default is high-level controller
+  // 切换运控控制器为底层控制器，默认是高层控制器
   status = robot.SetMotionControlLevel(ControllerLevel::HighLevel);
   if (status.code != ErrorCode::OK) {
     std::cerr << "switch robot motion control level failed"
@@ -151,16 +150,16 @@ int main(int argc, char* argv[]) {
     return -1;
   }
 
-  std::cout << "Press any key to continue (ESC to exit)..."
+  std::cout << "按任意键继续 (ESC退出)..."
             << std::endl;
 
-  // Wait for user input
+  // 等待用户输入
   while (1) {
     int key = getch();
     if (key == 27)
-      break;  // ESC key ASCII code is 27
+      break;  // ESC键ASCII码为27
 
-    std::cout << "Key ASCII: " << key << ", Character: " << static_cast<char>(key) << std::endl;
+    std::cout << "按键ASCII: " << key << ", 字符: " << static_cast<char>(key) << std::endl;
     switch (key) {
       case '1': {
         RecoveryStand();
@@ -175,38 +174,41 @@ int main(int argc, char* argv[]) {
         break;
       }
       case 'w': {
-        JoyStickCommand(0.0, 1.0, 0.0, 0.0);  // Forward
+        JoyStickCommand(0.0, 1.0, 0.0, 0.0);  // 向前
         break;
       }
       case 'a': {
-        JoyStickCommand(-1.0, 0.0, 0.0, 0.0);  // Left
+        JoyStickCommand(-1.0, 0.0, 0.0, 0.0);  // 向左
         break;
       }
       case 's': {
-        JoyStickCommand(0.0, -1.0, 0.0, 0.0);  // Backward
+        JoyStickCommand(0.0, -1.0, 0.0, 0.0);  // 向后
         break;
       }
       case 'd': {
-        JoyStickCommand(1.0, 0.0, 0.0, 0.0);  // Right
+        JoyStickCommand(1.0, 0.0, 0.0, 0.0);  // 向右
+        break;
+      }
+      case 'x': {
+        JoyStickCommand(0.0, 0.0, 0.0, 0.0);  // 停止
         break;
       }
       case 't': {
-        JoyStickCommand(0.0, 0.0, -1.0, 0.0);  // Turn left
+        JoyStickCommand(0.0, 0.0, -1.0, 0.0);  // 左转
         break;
       }
       case 'g': {
-        JoyStickCommand(0.0, 0.0, 1.0, 0.0);  // Turn right
+        JoyStickCommand(0.0, 0.0, 1.0, 0.0);  // 右转
         break;
       }
       default:
-        std::cout << "Unknown key: " << key << std::endl;
+        std::cout << "未知按键: " << key << std::endl;
         break;
     }
-
     usleep(10000);
   }
 
-  // Disconnect from robot
+  // 断开与机器人的链接
   status = robot.Disconnect();
   if (status.code != ErrorCode::OK) {
     std::cerr << "disconnect robot failed"
