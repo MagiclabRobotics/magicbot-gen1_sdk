@@ -71,7 +71,6 @@ To build your own application with this SDK, you can install the magicbot_gen1_s
   mkdir build
   cd build
   cmake .. -DCMAKE_INSTALL_PREFIX=/opt/magic_robotics/magic_gen1_sdk
-  make -j8
   sudo make install
 ```
 

@@ -369,11 +369,11 @@ typedef struct tts_cmd {
  * @brief IMU data structure, containing timestamp, attitude, angular velocity, acceleration and temperature information
  */
 struct Imu {
-  int64_t timestamp;              ///< Timestamp (unit: nanoseconds), indicating the time point when this IMU data was collected
-  double orientation[4];          ///< Attitude quaternion (w, x, y, z), used to represent spatial attitude, avoiding Euler angle gimbal lock issues
-  double angular_velocity[3];     ///< Angular velocity (unit: rad/s), angular velocity around X, Y, Z axes, usually from gyroscope
-  double linear_acceleration[3];  ///< Linear acceleration (unit: m/s^2), linear acceleration along X, Y, Z axes, usually from accelerometer
-  float temperature;              ///< Temperature (unit: Celsius or other, should be clarified when used)
+  int64_t timestamp;                          ///< Timestamp (unit: nanoseconds), indicating the time point when this IMU data was collected
+  std::array<double, 4> orientation;          ///< Attitude quaternion (w, x, y, z), used to represent spatial attitude, avoiding Euler angle gimbal lock issues
+  std::array<double, 3> angular_velocity;     ///< Angular velocity (unit: rad/s), angular velocity around X, Y, Z axes, usually from gyroscope
+  std::array<double, 3> linear_acceleration;  ///< Linear acceleration (unit: m/s^2), linear acceleration along X, Y, Z axes, usually from accelerometer
+  float temperature;                          ///< Temperature (unit: Celsius or other, should be clarified when used)
 };
 
 /**
@@ -443,9 +443,9 @@ struct CameraInfo {
 
   std::vector<double> D;  ///< Distortion parameter array
 
-  double K[9];   ///< Camera intrinsic parameter matrix
-  double R[9];   ///< Rectification matrix
-  double P[12];  ///< Projection matrix
+  std::array<double, 9> K;   ///< Camera intrinsic parameter matrix
+  std::array<double, 9> R;   ///< Rectification matrix
+  std::array<double, 12> P;  ///< Projection matrix
 
   int32_t binning_x;  ///< Horizontal binning coefficient
   int32_t binning_y;  ///< Vertical binning coefficient
