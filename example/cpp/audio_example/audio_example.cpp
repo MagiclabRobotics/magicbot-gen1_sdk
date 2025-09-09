@@ -170,8 +170,8 @@ int main(int argc, char* argv[]) {
     return -1;
   }
 
-  // Set RPC timeout to 5s
-  robot.SetTimeout(5000);
+  // Set RPC timeout to 10s
+  robot.SetTimeout(10000);
 
   // Connect to robot
   auto status = robot.Connect();

@@ -263,8 +263,8 @@ def main():
             robot.shutdown()
             return -1
 
-        # Set RPC timeout to 5 seconds
-        robot.set_timeout(5000)
+        # Set RPC timeout to 10 seconds
+        robot.set_timeout(10000)
 
         # Connect to robot
         status = robot.connect()
