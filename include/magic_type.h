@@ -179,18 +179,12 @@ struct JoystickCommand {
  * @brief Robot state enumeration, applicable to state machine control
  */
 enum class GaitMode : int32_t {
-  GAIT_PASSIVE = 0,            // Idle mode
-  GAIT_RECOVERY_STAND = 1,     // Recovery stand
-  GAIT_CLASSIC_WALK = 9,       // Classic walk
-  GAIT_PURE_DAMPER = 10,       // Damping mode
-  GAIT_HUMANOID_WALK = 11,     // Humanoid walk
-  GAIT_ALL_TERRAIN_WALK = 16,  // All-terrain walk
-  GAIT_FAST_WALK = 17,         // Fast walk
-  GAIT_SQUAT = 40,             // Squat
-  GAIT_BALANCE_STAND = 46,     // Balance stand (supports movement)
-  GAIT_ARM_SWING_WALK = 47,    // Arm swing walk
-  GAIT_HUMANOID_RUN = 100,     // Humanoid run
-  GAIT_LOWLEVL_SDK = 200,      // Low-level control SDK mode
+  GAIT_PASSIVE = 0,          // Idle mode
+  GAIT_RECOVERY_STAND = 1,   // Recovery stand
+  GAIT_PURE_DAMPER = 10,     // Pure damper mode
+  GAIT_BALANCE_STAND = 46,   // Balance stand (supports movement)
+  GAIT_ARM_SWING_WALK = 47,  // Arm swing walk
+  GAIT_LOWLEVL_SDK = 200,    // Low-level control SDK mode
 };
 
 /**

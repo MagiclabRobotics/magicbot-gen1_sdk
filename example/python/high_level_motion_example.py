@@ -125,6 +125,33 @@ def balance_stand():
         return False
 
 
+def pure_damper():
+    """Pure damper"""
+    global robot
+    try:
+        logging.info("=== Executing Pure Damper ===")
+
+        # Get high-level motion controller
+        controller = robot.get_high_level_motion_controller()
+
+        # Set gait to balance stand
+        status = controller.set_gait(magicbot.GaitMode.GAIT_PURE_DAMPER)
+        if status.code != magicbot.ErrorCode.OK:
+            logging.error(
+                "Failed to set robot gait, code: %s, message: %s",
+                status.code,
+                status.message,
+            )
+            return False
+
+        logging.info("Robot gait set to pure damper")
+        return True
+
+    except Exception as e:
+        logging.error("Exception occurred while executing pure damper: %s", e)
+        return False
+
+
 def execute_trick_celebrate():
     """Execute trick - celebrate action"""
     global robot
@@ -228,36 +255,6 @@ def stop_move():
     return joystick_command(0.0, 0.0, 0.0, 0.0)
 
 
-def demo_all_high_level_functions():
-    """Demo all high-level motion control functions"""
-    logging.info("=== Demo All High-Level Motion Control Functions ===")
-
-    success_count = 0
-    total_tests = 6
-
-    # Test recovery stand
-    if recovery_stand():
-        success_count += 1
-        time.sleep(2)
-
-    # Test balance stand
-    if balance_stand():
-        success_count += 1
-        time.sleep(2)
-
-    # Test celebrate trick
-    if execute_trick_celebrate():
-        success_count += 1
-        time.sleep(3)
-
-    logging.info(
-        "High-level motion control function test completed: %s/%s functions tested successfully",
-        success_count,
-        total_tests,
-    )
-    return success_count == total_tests
-
-
 def main():
     """Main function"""
     global robot, running
@@ -278,8 +275,8 @@ def main():
             robot.shutdown()
             return -1
 
-        # Set RPC timeout to 10 seconds
-        robot.set_timeout(10000)
+        # Set RPC timeout to 20 seconds
+        robot.set_timeout(20000)
 
         # Connect to robot
         status = robot.connect()
@@ -293,6 +290,10 @@ def main():
             return -1
 
         logging.info("Successfully connected to robot")
+
+        # get gait status
+        gait_mode = robot.get_high_level_motion_controller().get_gait()
+        logging.info("Gait mode: %s", gait_mode)
 
         # Switch motion control controller to high-level controller
         status = robot.set_motion_control_level(magicbot.ControllerLevel.HighLevel)
@@ -330,7 +331,9 @@ def main():
 
                 logging.info("Key pressed: %s", key)
 
-                if key == "1":
+                if key == "0":
+                    pure_damper()
+                elif key == "1":
                     recovery_stand()
                 elif key == "2":
                     balance_stand()

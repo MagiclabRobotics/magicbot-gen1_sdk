@@ -33,8 +33,8 @@ int main() {
     return -1;
   }
 
-  // Set RPC timeout to 10s
-  robot.SetTimeout(10000);
+  // Set RPC timeout to 20s
+  robot.SetTimeout(20000);
 
   // Connect to robot
   auto status = robot.Connect();

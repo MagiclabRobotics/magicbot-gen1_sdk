@@ -208,34 +208,10 @@ def main():
             robot.shutdown()
             return -1
 
-        # Set RPC timeout to 10 seconds
-        robot.set_timeout(10000)
+        # Set RPC timeout to 20 seconds
+        robot.set_timeout(20000)
 
-        # Connect to robot
-        status = robot.connect()
-        if status.code != magicbot.ErrorCode.OK:
-            logging.error(
-                "Failed to connect to robot, code: %s, message: %s",
-                status.code,
-                status.message,
-            )
-            robot.shutdown()
-            return -1
 
-        logging.info("Successfully connected to robot")
-
-        # Switch motion control controller to low-level controller, default is high-level controller
-        status = robot.set_motion_control_level(magicbot.ControllerLevel.LowLevel)
-        if status.code != magicbot.ErrorCode.OK:
-            logging.error(
-                "Failed to switch robot motion control level, code: %s, message: %s",
-                status.code,
-                status.message,
-            )
-            robot.shutdown()
-            return -1
-
-        logging.info("Switched to low-level motion controller")
 
         # Get low-level motion controller
         controller = robot.get_low_level_motion_controller()

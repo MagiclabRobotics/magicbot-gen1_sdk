@@ -79,7 +79,7 @@ def set_volume():
         controller = robot.get_audio_controller()
 
         # Set volume to 7
-        status = controller.set_volume(7)
+        status = controller.set_volume(50)
         if status.code != magicbot.ErrorCode.OK:
             logging.error(
                 "Failed to set volume, code: %s, message: %s",
@@ -263,8 +263,8 @@ def main():
             robot.shutdown()
             return -1
 
-        # Set RPC timeout to 10 seconds
-        robot.set_timeout(10000)
+        # Set RPC timeout to 20 seconds
+        robot.set_timeout(20000)
 
         # Connect to robot
         status = robot.connect()
