@@ -30,9 +30,6 @@ int main() {
     return -1;
   }
 
-  // Set RPC timeout to 20s
-  robot.SetTimeout(20000);
-
   // Connect to robot
   auto status = robot.Connect();
   if (status.code != ErrorCode::OK) {

@@ -51,6 +51,7 @@ endif()
 
 add_library(magicbot_gen1_sdk SHARED IMPORTED GLOBAL)
 add_library(magicbot::gen1_sdk ALIAS magicbot_gen1_sdk)
+add_library(magicbot_gen1::sdk ALIAS magicbot_gen1_sdk)
 
 set_target_properties(
   magicbot_gen1_sdk

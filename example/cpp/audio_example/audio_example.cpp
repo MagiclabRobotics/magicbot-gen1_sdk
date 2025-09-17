@@ -64,7 +64,7 @@ void SetVolume() {
   // Get audio controller
   auto& controller = robot.GetAudioController();
   // Set volume
-  auto status = controller.SetVolume(7);
+  auto status = controller.SetVolume(50);
   if (status.code != ErrorCode::OK) {
     std::cerr << "set volume failed"
               << ", code: " << status.code
@@ -83,7 +83,7 @@ void PlayTts() {
   tts.content = "How's the weather today!";
   tts.priority = TtsPriority::HIGH;
   tts.mode = TtsMode::CLEARTOP;
-  auto status = controller.Play(tts);
+  auto status = controller.Play(tts, 10000);
   if (status.code != ErrorCode::OK) {
     std::cerr << "play tts failed"
               << ", code: " << status.code
@@ -169,9 +169,6 @@ int main(int argc, char* argv[]) {
     robot.Shutdown();
     return -1;
   }
-
-  // Set RPC timeout to 20s
-  robot.SetTimeout(20000);
 
   // Connect to robot
   auto status = robot.Connect();

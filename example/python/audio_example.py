@@ -108,7 +108,7 @@ def play_tts():
         tts.mode = magicbot.TtsMode.CLEARTOP
 
         # Play speech
-        status = controller.play(tts)
+        status = controller.play(tts, 10000)
         if status.code != magicbot.ErrorCode.OK:
             logging.error(
                 "Failed to play TTS, code: %s, message: %s", status.code, status.message
@@ -262,9 +262,6 @@ def main():
             logging.error("Failed to initialize robot SDK")
             robot.shutdown()
             return -1
-
-        # Set RPC timeout to 20 seconds
-        robot.set_timeout(20000)
 
         # Connect to robot
         status = robot.connect()

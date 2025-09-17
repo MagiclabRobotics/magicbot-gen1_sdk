@@ -55,9 +55,10 @@ class MAGIC_EXPORT_API AudioController final : public NonCopyable {
   /**
    * @brief Play voice command (TTS).
    * @param cmd TTS command containing text content, speed, tone and other parameters.
+   * @param timeout_ms Timeout in milliseconds.
    * @return Operation status, returns Status::OK on success.
    */
-  Status Play(const TtsCommand& cmd);
+  Status Play(const TtsCommand& cmd, int timeout_ms = 5000);
 
   /**
    * @brief Stop current audio playback.

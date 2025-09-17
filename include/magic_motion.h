@@ -77,9 +77,10 @@ class MAGIC_EXPORT_API HighLevelMotionController final : public MotionController
   /**
    * @brief Set robot gait mode (such as recovery stand, balance stand, humanoid walk, etc., refer to GaitMode definition).
    * @param gait_mode Enum type gait mode.
+   * @param timeout_ms Timeout in milliseconds.
    * @return Execution status.
    */
-  Status SetGait(const GaitMode gait_mode);
+  Status SetGait(const GaitMode gait_mode, int timeout_ms = 10000);
 
   /**
    * @brief Get robot gait mode (such as recovery stand, balance stand, humanoid walk, etc., refer to GaitMode definition).
@@ -91,10 +92,11 @@ class MAGIC_EXPORT_API HighLevelMotionController final : public MotionController
   /**
    * @brief Execute specified trick action (such as bowing, waving, etc.).
    * @param trick_action Trick action identifier.
+   * @param timeout_ms Timeout in milliseconds.
    * @return Execution status.
    * @note Trick actions are usually predefined complex action sequences, must be performed under GaitMode::GAIT_BALANCE_STAND(46) gait for trick display.
    */
-  Status ExecuteTrick(const TrickAction trick_action);
+  Status ExecuteTrick(const TrickAction trick_action, int timeout_ms = 10000);
 
   /**
    * @brief Send real-time joystick control command. Recommended sending frequency is 20Hz.
@@ -141,13 +143,6 @@ class MAGIC_EXPORT_API LowLevelMotionController final : public MotionControllerB
    * @brief Shutdown controller, release low-level resources.
    */
   virtual void Shutdown() override;
-
-  /**
-   * @brief Set controller cycle time (unit: milliseconds).
-   * @param period_ms Controller cycle time in milliseconds.
-   * @note If the set period is less than 1ms, it will be automatically adjusted to the default value of 2ms, recommended not less than 2ms.
-   */
-  void SetPeriodMs(uint64_t period_ms);
 
   // === Arm Control ===
 

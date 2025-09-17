@@ -52,9 +52,6 @@ def main():
             robot.shutdown()
             return -1
 
-        # Set RPC timeout to 20 seconds
-        robot.set_timeout(20000)
-
         # Connect to robot
         status = robot.connect()
         if status.code != magicbot.ErrorCode.OK:

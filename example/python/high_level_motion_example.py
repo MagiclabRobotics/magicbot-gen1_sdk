@@ -108,7 +108,7 @@ def balance_stand():
         controller = robot.get_high_level_motion_controller()
 
         # Set gait to balance stand
-        status = controller.set_gait(magicbot.GaitMode.GAIT_BALANCE_STAND)
+        status = controller.set_gait(magicbot.GaitMode.GAIT_BALANCE_STAND, 10000)
         if status.code != magicbot.ErrorCode.OK:
             logging.error(
                 "Failed to set robot gait, code: %s, message: %s",
@@ -135,7 +135,7 @@ def pure_damper():
         controller = robot.get_high_level_motion_controller()
 
         # Set gait to balance stand
-        status = controller.set_gait(magicbot.GaitMode.GAIT_PURE_DAMPER)
+        status = controller.set_gait(magicbot.GaitMode.GAIT_PURE_DAMPER, 10000)
         if status.code != magicbot.ErrorCode.OK:
             logging.error(
                 "Failed to set robot gait, code: %s, message: %s",
@@ -162,7 +162,7 @@ def execute_trick_celebrate():
         controller = robot.get_high_level_motion_controller()
 
         # Execute celebrate trick
-        status = controller.execute_trick(magicbot.TrickAction.ACTION_CELEBRATE)
+        status = controller.execute_trick(magicbot.TrickAction.ACTION_CELEBRATE, 10000)
         if status.code != magicbot.ErrorCode.OK:
             logging.error(
                 "Failed to execute robot trick, code: %s, message: %s",
@@ -275,9 +275,6 @@ def main():
             robot.shutdown()
             return -1
 
-        # Set RPC timeout to 20 seconds
-        robot.set_timeout(20000)
-
         # Connect to robot
         status = robot.connect()
         if status.code != magicbot.ErrorCode.OK:
@@ -292,7 +289,7 @@ def main():
         logging.info("Successfully connected to robot")
 
         # get gait status
-        gait_mode = robot.get_high_level_motion_controller().get_gait()
+        status, gait_mode = robot.get_high_level_motion_controller().get_gait()
         logging.info("Gait mode: %s", gait_mode)
 
         # Switch motion control controller to high-level controller
