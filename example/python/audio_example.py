@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# -*- coding: utf-8 -*-
 
 import sys
 import time
@@ -27,8 +28,6 @@ def signal_handler(signum, frame):
     logging.info("Received interrupt signal (%s), exiting...", signum)
     running = False
     if robot:
-        robot.disconnect()
-        logging.info("Robot disconnected")
         robot.shutdown()
         logging.info("Robot shutdown")
     exit(-1)
@@ -38,15 +37,26 @@ def print_help():
     """Print help information"""
     logging.info("Key Function Demo Program")
     logging.info("")
-    logging.info("Key Function Description:")
-    logging.info("  ESC      Exit program")
+    logging.info("Audio Functions:")
     logging.info("  1        Function 1: Get volume")
     logging.info("  2        Function 2: Set volume")
     logging.info("  3        Function 3: Play TTS")
     logging.info("  4        Function 4: Stop playback")
+    logging.info("")
+    logging.info("Audio stream Functions:")
     logging.info("  5        Function 5: Open audio stream")
     logging.info("  6        Function 6: Close audio stream")
     logging.info("  7        Function 7: Subscribe to audio stream")
+    logging.info("  8        Function 8: Unsubscribe to audio stream")
+    logging.info("")
+    logging.info("Wakeup Status Functions:")
+    logging.info("  Q        Function Q: Open wakeup status stream")
+    logging.info("  W        Function W: Close wakeup status stream")
+    logging.info("  E        Function E: Subscribe to wakeup status")
+    logging.info("  R        Function R: Unsubscribe to wakeup status")
+    logging.info("")
+    logging.info("  ?        Function ?: Print help")
+    logging.info("  ESC      Exit program")
 
 
 def get_volume():
@@ -71,7 +81,7 @@ def get_volume():
         logging.error("Exception occurred while getting volume: %s", e)
 
 
-def set_volume():
+def set_volume(volume):
     """Set volume"""
     global robot
     try:
@@ -79,7 +89,7 @@ def set_volume():
         controller = robot.get_audio_controller()
 
         # Set volume to 7
-        status = controller.set_volume(50)
+        status = controller.set_volume(volume)
         if status.code != magicbot.ErrorCode.OK:
             logging.error(
                 "Failed to set volume, code: %s, message: %s",
@@ -93,7 +103,7 @@ def set_volume():
         logging.error("Exception occurred while setting volume: %s", e)
 
 
-def play_tts():
+def play_tts(content):
     """Play TTS speech"""
     global robot
     try:
@@ -103,12 +113,12 @@ def play_tts():
         # Create TTS command
         tts = magicbot.TtsCommand()
         tts.id = "100000000001"
-        tts.content = "How's the weather today!"
+        tts.content = content
         tts.priority = magicbot.TtsPriority.HIGH
         tts.mode = magicbot.TtsMode.CLEARTOP
 
         # Play speech
-        status = controller.play(tts, 10000)
+        status = controller.play(tts)
         if status.code != magicbot.ErrorCode.OK:
             logging.error(
                 "Failed to play TTS, code: %s, message: %s", status.code, status.message
@@ -203,6 +213,8 @@ def subscribe_audio_stream():
                     "Received original audio stream data, size: %d",
                     audio_stream.data_length,
                 )
+                sys.stdout.write("\r")
+                sys.stdout.flush()
             origin_counter += 1
 
         def bf_audio_callback(audio_stream):
@@ -212,6 +224,8 @@ def subscribe_audio_stream():
                 logging.info(
                     "Received BF audio stream data, size: %d", audio_stream.data_length
                 )
+                sys.stdout.write("\r")
+                sys.stdout.flush()
             bf_counter += 1
 
         # Subscribe to audio streams
@@ -223,24 +237,131 @@ def subscribe_audio_stream():
         logging.error("Exception occurred while subscribing to audio stream: %s", e)
 
 
-def get_user_input():
-    """Get user input"""
+def unsubscribe_audio_stream():
+    """Unsubscribe to audio stream"""
+    global robot
     try:
-        # Python implementation of getch() on Linux systems
-        import tty
-        import termios
+        # Get audio controller
+        controller = robot.get_audio_controller()
 
-        fd = sys.stdin.fileno()
-        old_settings = termios.tcgetattr(fd)
-        try:
-            tty.setraw(sys.stdin.fileno())
-            ch = sys.stdin.read(1)
-        finally:
-            termios.tcsetattr(fd, termios.TCSADRAIN, old_settings)
-        return ch
-    except ImportError:
-        # If termios is not available, use simple input
-        return input("Please press a key: ").strip()
+        # Unsubscribe to audio stream
+        controller.unsubscribe_bf_audio_stream()
+        controller.unsubscribe_origin_audio_stream()
+
+        logging.info("Unsubscribed to audio stream")
+    except Exception as e:
+        logging.error("Exception occurred while unsubscribing to audio stream: %s", e)
+
+
+def open_wakeup_status_stream():
+    """Open wakeup status stream"""
+    global robot
+    try:
+        # Get audio controller
+        controller = robot.get_audio_controller()
+
+        # Open wakeup status stream
+        status = controller.open_wakeup_status_stream()
+        if status.code != magicbot.ErrorCode.OK:
+            logging.error(
+                "Failed to open wakeup status stream, code: %s, message: %s",
+                status.code,
+                status.message,
+            )
+            return
+
+        logging.info("Successfully opened wakeup status stream")
+    except Exception as e:
+        logging.error("Exception occurred while opening wakeup status stream: %s", e)
+
+
+def close_wakeup_status_stream():
+    """Close wakeup status stream"""
+    global robot
+    try:
+        # Get audio controller
+        controller = robot.get_audio_controller()
+
+        # Close wakeup status stream
+        status = controller.close_wakeup_status_stream()
+        if status.code != magicbot.ErrorCode.OK:
+            logging.error(
+                "Failed to close wakeup status stream, code: %s, message: %s",
+                status.code,
+                status.message,
+            )
+            return
+
+        logging.info("Successfully closed wakeup status stream")
+    except Exception as e:
+        logging.error("Exception occurred while closing wakeup status stream: %s", e)
+
+
+def unsubscribe_wakeup_status():
+    """Unsubscribe to wakeup status"""
+    global robot
+    try:
+        # Get audio controller
+        controller = robot.get_audio_controller()
+
+        # Unsubscribe to wakeup status
+        controller.unsubscribe_wakeup_status()
+
+        logging.info("Unsubscribed to wakeup status")
+    except Exception as e:
+        logging.error("Exception occurred while unsubscribing to wakeup status: %s", e)
+
+
+def subscribe_wakeup_status():
+    """Subscribe to wakeup status"""
+    global robot
+    try:
+        # Get audio controller
+        controller = robot.get_audio_controller()
+
+        # Wakeup status counter
+        wakeup_counter = 0
+
+        def wakeup_status_callback(wakeup_status):
+            """Wakeup status callback function"""
+            nonlocal wakeup_counter
+            if wakeup_status.is_wakeup:
+                if wakeup_status.enable_wakeup_orientation:
+                    logging.info(
+                        "Voice wakeup detected! Orientation: %.2f radians (%.1f degrees)",
+                        wakeup_status.wakeup_orientation,
+                        wakeup_status.wakeup_orientation * 180.0 / 3.14159,
+                    )
+                else:
+                    logging.info("Voice wakeup detected!")
+                sys.stdout.write("\r")
+                sys.stdout.flush()
+            else:
+                if wakeup_counter % 10 == 0:  # Log every 50th non-wakeup status
+                    logging.info(
+                        "Wakeup status: sleeping, enable_wakeup_orientation: %s, orientation: %.2f radians",
+                        wakeup_status.enable_wakeup_orientation,
+                        wakeup_status.wakeup_orientation * 180.0 / 3.14159,
+                    )
+                    sys.stdout.write("\r")
+                    sys.stdout.flush()
+            wakeup_counter += 1
+
+        # Subscribe to wakeup status
+        controller.subscribe_wakeup_status(wakeup_status_callback)
+
+        logging.info("Subscribed to wakeup status stream")
+    except Exception as e:
+        logging.error("Exception occurred while subscribing to wakeup status: %s", e)
+
+
+def get_user_input():
+    """Get user input - Read a single line of data"""
+    try:
+        # Method 1: Read a line using input() (recommended)
+        return input("Enter command: ").strip()
+    except (EOFError, KeyboardInterrupt):
+        return ""
 
 
 def main():
@@ -291,27 +412,64 @@ def main():
         # Main loop
         while running:
             try:
-                key = get_user_input()
+                str_input = get_user_input()
 
+                # Split input parameters by space
+                parts = str_input.strip().split()
+
+                if not parts:
+                    time.sleep(0.01)  # Brief delay
+                    continue
+
+                # Parse parameters
+                key = parts[0]
+                args = parts[1:] if len(parts) > 1 else []
                 if key == "\x1b":  # ESC key
                     break
-
-                logging.info("Key pressed: %s", key)
-
+                # 1. Audio Functions
+                # 1.1 Get volume
                 if key == "1":
                     get_volume()
+                # 1.2 Set volume
                 elif key == "2":
-                    set_volume()
+                    volume = args[0] if args else 50
+                    set_volume(volume)
+                # 1.3 Play TTS
                 elif key == "3":
-                    play_tts()
+                    content = args[0] if args else "How's the weather today!"
+                    play_tts(content)
+                # 1.4 Stop TTS
                 elif key == "4":
                     stop_tts()
+                # 2. Audio Stream Functions
+                # 2.1 Open audio stream
                 elif key == "5":
                     open_audio_stream()
+                # 2.2 Close audio stream
                 elif key == "6":
                     close_audio_stream()
+                # 2.3 Subscribe to audio stream
                 elif key == "7":
                     subscribe_audio_stream()
+                # 2.4 Unsubscribe from audio stream
+                elif key.upper() == "8":
+                    unsubscribe_audio_stream()
+                # 3. Wakeup Status Functions
+                # 3.1 Open wakeup status stream
+                elif key.upper() == "Q":
+                    open_wakeup_status_stream()
+                # 3.2 Close wakeup status stream
+                elif key.upper() == "W":
+                    close_wakeup_status_stream()
+                # 3.3 Subscribe to wakeup status stream
+                elif key.upper() == "E":
+                    subscribe_wakeup_status()
+                # 3.4 Unsubscribe from wakeup status stream
+                elif key.upper() == "R":
+                    unsubscribe_wakeup_status()
+                # 4. Print help information
+                elif key.upper() == "?":
+                    print_help()
                 else:
                     logging.warning("Unknown key: %s", key)
 

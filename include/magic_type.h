@@ -18,8 +18,6 @@ constexpr uint8_t kArmJointNum = 14;
 constexpr uint8_t kWaistJointNum = 2;
 constexpr uint8_t kLegJointNum = 12;
 
-constexpr uint64_t kPeriodMs = 2;  ///< Controller cycle time in milliseconds
-
 /************************************************************
  *                        Interface Information             *
  ************************************************************/
@@ -51,7 +49,7 @@ struct Fault {
    *
    * Integer value used to identify specific exception types. Different error codes can correspond to different error types, facilitating error management and handling.
    */
-  int error_code;
+  int error_code = 0;
 
   /**
    * @brief Error message
@@ -100,28 +98,28 @@ typedef struct bms_data {
    *
    * Current battery capacity percentage, ranging from 0 to 100, representing the remaining battery capacity.
    */
-  float battery_percentage;
+  double battery_percentage = 0.0;
 
   /**
    * @brief Battery health status
    *
-   * Battery health condition, usually a floating value representing battery performance. Higher health status indicates better battery condition.
+   * Battery health condition, usually a double value representing battery performance. Higher health status indicates better battery condition.
    */
-  float battery_health;
+  double battery_health = 0.0;
 
   /**
    * @brief Battery state
    *
    * Current battery state, usually associated with values of the `BatteryState` enumeration type, used to represent different battery states.
    */
-  BatteryState battery_state;
+  BatteryState battery_state = BatteryState::UNKNOWN;
 
   /**
    * @brief Charging status
    *
    * A boolean value indicating whether the battery is charging. `true` means the battery is charging, `false` means the battery is not charging.
    */
-  PowerSupplyStatus power_supply_status;
+  PowerSupplyStatus power_supply_status = PowerSupplyStatus::UNKNOWN;
 } BmsData;
 
 typedef struct robot_state {
@@ -152,7 +150,7 @@ struct JoystickCommand {
    * This value represents the left joystick input along the X-axis direction, ranging from -1.0 to 1.0.
    * -1.0 means left movement, 1.0 means right movement, 0 means neutral position.
    */
-  float left_x_axis;
+  double left_x_axis = 0.0;
 
   /**
    * @brief Left joystick Y-axis direction value
@@ -160,7 +158,7 @@ struct JoystickCommand {
    * This value represents the left joystick input along the Y-axis direction, ranging from -1.0 to 1.0.
    * -1.0 means downward movement, 1.0 means upward movement, 0 means neutral position.
    */
-  float left_y_axis;
+  double left_y_axis = 0.0;
 
   /**
    * @brief Right joystick X-axis direction value
@@ -168,12 +166,12 @@ struct JoystickCommand {
    * This value represents the right joystick rotation along the Z-axis direction, ranging from -1.0 to 1.0.
    * -1.0 means left rotation, 1.0 means right rotation, 0 means neutral position.
    */
-  float right_x_axis;
+  double right_x_axis = 0.0;
 
   /**
    * @brief Right joystick Y-axis direction value, to be determined
    */
-  float right_y_axis;
+  double right_y_axis = 0.0;
 };
 /**
  * @brief Robot state enumeration, applicable to state machine control
@@ -213,14 +211,14 @@ enum class TrickAction : int32_t {
  */
 struct SingleHandJointCommand {
   int16_t operation_mode = 0;  ///< Control mode (such as position, torque, impedance, etc.)
-  std::vector<float> pos;      ///< Desired position array (7 degrees of freedom)
+  std::vector<double> pos;     ///< Desired position array (7 degrees of freedom)
 };
 
 /**
  * @brief Complete hand control command
  */
 struct HandCommand {
-  int64_t timestamp;                        ///< Timestamp (unit: nanoseconds)
+  int64_t timestamp = 0;                    ///< Timestamp (unit: nanoseconds)
   std::vector<SingleHandJointCommand> cmd;  ///< Control command array, left hand and right hand in sequence
 };
 
@@ -228,18 +226,18 @@ struct HandCommand {
  * @brief Single hand joint state
  */
 struct SingleHandJointState {
-  int16_t status_word;     ///< Status
-  std::vector<float> pos;  ///< Actual position (unit depends on controller definition)
-  std::vector<float> toq;  ///< Actual torque (unit: Nm)
-  std::vector<float> cur;  ///< Actual current (unit: A)
-  int16_t error_code;      ///< Error code (0 means normal)
+  int16_t status_word = 0;  ///< Status
+  std::vector<double> pos;  ///< Actual position (unit depends on controller definition)
+  std::vector<double> toq;  ///< Actual torque (unit: Nm)
+  std::vector<double> cur;  ///< Actual current (unit: A)
+  int16_t error_code = 0;   ///< Error code (0 means normal)
 };
 
 /**
  * @brief Complete hand state information
  */
 struct HandState {
-  int64_t timestamp;                        ///< Timestamp (unit: nanoseconds)
+  int64_t timestamp = 0;                    ///< Timestamp (unit: nanoseconds)
   std::vector<SingleHandJointState> state;  ///< All hand joint states (total of two), left hand and right hand in sequence
 };
 
@@ -248,11 +246,11 @@ struct HandState {
  */
 struct SingleJointCommand {
   int16_t operation_mode = 200;  ///< Operation mode (such as position control, velocity control, torque control, etc.)
-  float pos;                     ///< Target position (unit: rad or m, depending on joint type)
-  float vel;                     ///< Target velocity (unit: rad/s or m/s)
-  float toq;                     ///< Target torque (unit: Nm)
-  float kp;                      ///< Position loop control gain (proportional term)
-  float kd;                      ///< Velocity loop control gain (derivative term)
+  double pos = 0.0;              ///< Target position (unit: rad or m, depending on joint type)
+  double vel = 0.0;              ///< Target velocity (unit: rad/s or m/s)
+  double toq = 0.0;              ///< Target torque (unit: Nm)
+  double kp = 0.0;               ///< Position loop control gain (proportional term)
+  double kd = 0.0;               ///< Velocity loop control gain (derivative term)
 };
 
 /**
@@ -272,13 +270,13 @@ struct JointCommand {
  * @brief Single joint state information
  */
 struct SingleJointState {
-  int16_t status_word;  ///< Current joint state (custom state machine encoding)
-  float posH;           ///< Actual position (high encoder reading, may be redundant encoder)
-  float posL;           ///< Actual position (low encoder reading)
-  float vel;            ///< Current velocity (unit: rad/s or m/s)
-  float toq;            ///< Current torque (unit: Nm)
-  float current;        ///< Current current (unit: A)
-  int16_t err_code;     ///< Error code (such as encoder exception, motor overcurrent, etc.)
+  int16_t status_word = 0;  ///< Current joint state (custom state machine encoding)
+  double posH = 0.0;        ///< Actual position (high encoder reading, may be redundant encoder)
+  double posL = 0.0;        ///< Actual position (low encoder reading)
+  double vel = 0.0;         ///< Current velocity (unit: rad/s or m/s)
+  double toq = 0.0;         ///< Current torque (unit: Nm)
+  double current = 0.0;     ///< Current current (unit: A)
+  int16_t err_code = 0;     ///< Error code (such as encoder exception, motor overcurrent, etc.)
 };
 
 /**
@@ -355,6 +353,41 @@ typedef struct tts_cmd {
   TtsMode mode;
 } TtsCommand;
 
+/**
+ * @brief Audio stream data structure
+ */
+struct AudioStream {
+  // Audio data
+  int32_t data_length = 0;        // Actual length of audio data (bytes)
+  std::vector<uint8_t> raw_data;  // Audio data
+};
+
+/**
+ * @brief Voice wake-up status structure
+ */
+struct WakeupStatus {
+  /**
+   * @brief Wake-up status
+   *
+   * Whether the voice wake-up is triggered.
+   */
+  bool is_wakeup = false;
+
+  /**
+   * @brief Wake-up orientation enable
+   *
+   * Whether the wake-up orientation is enabled.
+   */
+  bool enable_wakeup_orientation = false;
+
+  /**
+   * @brief Wake-up orientation
+   *
+   * The orientation at which the voice wake-up is triggered, in radians.
+   */
+  double wakeup_orientation = 0.0;
+};
+
 /************************************************************
  *                         Sensors                          *
  ************************************************************/
@@ -367,7 +400,7 @@ struct Imu {
   std::array<double, 4> orientation;          ///< Attitude quaternion (w, x, y, z), used to represent spatial attitude, avoiding Euler angle gimbal lock issues
   std::array<double, 3> angular_velocity;     ///< Angular velocity (unit: rad/s), angular velocity around X, Y, Z axes, usually from gyroscope
   std::array<double, 3> linear_acceleration;  ///< Linear acceleration (unit: m/s^2), linear acceleration along X, Y, Z axes, usually from accelerometer
-  float temperature;                          ///< Temperature (unit: Celsius or other, should be clarified when used)
+  double temperature;                         ///< Temperature (unit: Celsius or other, should be clarified when used)
 };
 
 /**
@@ -466,12 +499,15 @@ struct TrinocularCameraFrame {
 };
 
 /**
- * @brief Audio stream data structure
+ * @brief Odometry data structure
  */
-struct AudioStream {
-  // Audio data
-  int32_t data_length;            // Actual length of audio data (bytes)
-  std::vector<uint8_t> raw_data;  // Audio data
+struct Odometry {
+  Header header;                           ///< Generic message header (timestamp + frame_id)
+  std::string child_frame_id;              ///< Child frame ID
+  std::array<double, 3> position;          ///< Position (x, y, z)
+  std::array<double, 4> orientation;       ///< Orientation (w, x, y, z)
+  std::array<double, 3> linear_velocity;   ///< Linear velocity (x, y, z)
+  std::array<double, 3> angular_velocity;  ///< Angular velocity (x, y, z)
 };
 
 class NonCopyable {
@@ -482,6 +518,127 @@ class NonCopyable {
   NonCopyable& operator=(NonCopyable&&) = default;
   NonCopyable(const NonCopyable&) = delete;
   NonCopyable& operator=(const NonCopyable&) = delete;
+};
+
+/************************************************************
+ *                     Slam and Navigation                  *
+ ************************************************************/
+
+/**
+ * @brief SLAM mode enumeration type
+ */
+enum class SlamMode {
+  IDLE = 0,          // Idle mode
+  MAPPING = 1,       // Mapping mode
+  LOCALIZATION = 3,  // Localization mode
+};
+
+/**
+ * @brief Navigation mode enumeration type
+ */
+enum class NavMode {
+  IDLE = 0,       // Idle mode
+  GRID_MAP = 13,  // Grid map navigation mode
+};
+
+/**
+ * @brief 3D pose structure
+ */
+struct Pose3DEuler {
+  std::array<double, 3> position;     ///< Position (x, y, z), used to represent spatial position
+  std::array<double, 3> orientation;  ///< Euler angles (roll, pitch, yaw), used to represent spatial attitude, avoiding Euler angle gimbal lock issues
+};
+
+/**
+ * @brief 2D point structure
+ */
+struct Point2D {
+  double x = 0.0;
+  double y = 0.0;
+};
+
+/**
+ * @brief Region structure
+ */
+struct PolyRegion {
+  // 2D points, four points, in sequence
+  std::vector<Point2D> points;
+};
+
+/**
+ * @brief Mapping image data structure, .pgm format
+ */
+struct MapImageData {
+  std::string type;             // magic number, "P5": binary format
+  uint32_t width = 0;           // image width
+  uint32_t height = 0;          // image height
+  uint32_t max_gray_value = 0;  // max gray value, 255
+  std::vector<uint8_t> image;   // image data
+};
+
+/**
+ * @brief Mapping map metadata structure
+ */
+struct MapMetaData {
+  double resolution = 0.0;      // Map resolution, unit: m/pixel
+  Pose3DEuler origin;           // Map origin, origin of the world coordinate system relative to the map’s lower-left corner
+  MapImageData map_image_data;  // image data, .pgm format image data
+};
+
+/**
+ * @brief Single map information structure
+ */
+struct MapInfo {
+  std::string map_name;       // Map name
+  MapMetaData map_meta_data;  // Map metadata
+};
+
+/**
+ * @brief All map information structure
+ */
+struct AllMapInfo {
+  std::string current_map_name;    // Current map name
+  std::vector<MapInfo> map_infos;  // All map information
+};
+
+/**
+ * @brief Current localization information structure
+ */
+struct LocalizationInfo {
+  bool is_localization = false;  // Whether localized
+  Pose3DEuler pose;              // Pose in euler angle(radians)
+};
+
+/**
+ * @brief Global navigation target point structure
+ */
+struct NavTarget {
+  int32_t id = -1;       // Target point ID
+  std::string frame_id;  // Target point frame ID
+  Pose3DEuler goal;      // Target point pose in euler angle(radians)
+};
+
+/**
+ * @brief Navigation status type
+ */
+enum class NavStatusType {
+  NONE = 0,         // None status
+  RUNNING = 1,      // Running
+  END_SUCCESS = 2,  // End success
+  END_FAILED = 3,   // End failed
+  PAUSE = 4,        // Pause
+  CONTINUE = 5,     // Continue
+  CANCEL = 6,       // Cancel
+};
+
+/**
+ * @brief Navigation status structure
+ */
+struct NavStatus {
+  int32_t id = -1;                             // Target point ID, -1 means no target point
+  NavStatusType status = NavStatusType::NONE;  // Navigation status
+  int32_t error_code = 0;                      // Navigation error code
+  std::string error_desc;                      // Navigation error description
 };
 
 }  // namespace magic::gen1

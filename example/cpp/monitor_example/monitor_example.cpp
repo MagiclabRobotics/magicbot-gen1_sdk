@@ -1,4 +1,5 @@
 #include "magic_robot.h"
+#include "magic_sdk_version.h"
 
 #include <unistd.h>
 #include <csignal>
@@ -20,6 +21,8 @@ void signalHandler(int signum) {
 int main() {
   // Bind SIGINT (Ctrl+C)
   signal(SIGINT, signalHandler);
+
+  std::cout << "SDK Version: " << SDK_VERSION_STRING << std::endl;
 
   std::string local_ip = "192.168.54.111";
   // Configure local IP address for direct network connection and initialize SDK
@@ -43,7 +46,15 @@ int main() {
 
   auto& monitor = robot.GetStateMonitor();
 
-  auto state = monitor.GetCurrentState();
+  RobotState state;
+  status = monitor.GetCurrentState(state);
+  if (status.code != ErrorCode::OK) {
+    std::cerr << "get current state failed"
+              << ", code: " << status.code
+              << ", message: " << status.message << std::endl;
+    robot.Shutdown();
+    return -1;
+  }
 
   std::cout << "health: " << state.bms_data.battery_health
             << ", percentage: " << state.bms_data.battery_percentage
@@ -54,7 +65,7 @@ int main() {
   auto& faults = state.faults;
   for (auto& [code, msg] : faults) {
     std::cout << "code: " << std::to_string(code)
-              << ", message: " << msg;
+              << ", message: " << msg << std::endl;
   }
 
   // Disconnect from robot

@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# -*- coding: utf-8 -*-
 
 import sys
 import time
@@ -32,8 +33,6 @@ def signal_handler(signum, frame):
     running = False
     logging.info("Received interrupt signal (%s), exiting...", signum)
     if robot:
-        robot.disconnect()
-        logging.info("Robot disconnected")
         robot.shutdown()
         logging.info("Robot shutdown")
     exit(-1)
@@ -46,14 +45,24 @@ def body_imu_callback(imu_data):
         logging.info("+++++++++++++ Received body IMU data")
         # Print IMU data
         logging.info("Received body IMU data, timestamp: %d", imu_data.timestamp)
-        logging.info("Received body IMU data, orientation: %s", imu_data.orientation)
         logging.info(
-            "Received body IMU data, angular_velocity: %s",
-            imu_data.angular_velocity,
+            "Received body IMU data, orientation: [%f,%f,%f,%f]",
+            imu_data.orientation[0],
+            imu_data.orientation[1],
+            imu_data.orientation[2],
+            imu_data.orientation[3],
         )
         logging.info(
-            "Received body IMU data, linear_acceleration: %s",
-            imu_data.linear_acceleration,
+            "Received body IMU data, angular_velocity: [%f,%f,%f]",
+            imu_data.angular_velocity[0],
+            imu_data.angular_velocity[1],
+            imu_data.angular_velocity[2],
+        )
+        logging.info(
+            "Received body IMU data, linear_acceleration: [%f,%f,%f]",
+            imu_data.linear_acceleration[0],
+            imu_data.linear_acceleration[1],
+            imu_data.linear_acceleration[2],
         )
         logging.info("Received body IMU data, temperature: %s", imu_data.temperature)
     body_imu_counter += 1

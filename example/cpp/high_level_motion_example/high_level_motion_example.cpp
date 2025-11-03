@@ -1,4 +1,5 @@
 #include "magic_robot.h"
+#include "magic_sdk_version.h"
 
 #include <termios.h>
 #include <unistd.h>
@@ -18,21 +19,31 @@ void signalHandler(int signum) {
   exit(signum);
 }
 
-void print_help(const char* prog_name) {
-  std::cout << "Key Function Demo Program\n\n";
-  std::cout << "Usage: " << prog_name << "\n";
+void print_help() {
   std::cout << "Key Function Description:\n";
-  std::cout << "  ESC      Exit program\n";
+  std::cout << "Gait and Trick Functions:\n";
   std::cout << "  1        Function 1: Recovery stand\n";
   std::cout << "  2        Function 2: Balance stand\n";
   std::cout << "  3        Function 3: Execute trick - celebrate action\n";
-  std::cout << "  w        Function 4: Move forward\n";
-  std::cout << "  a        Function 5: Move left\n";
-  std::cout << "  s        Function 6: Move backward\n";
-  std::cout << "  d        Function 7: Move right\n";
-  std::cout << "  x        Function 8: Stop\n";
-  std::cout << "  t        Function 9: Turn left\n";
-  std::cout << "  g        Function 10: Turn right\n";
+  std::cout << "\n";
+  std::cout << "Joystick Functions:\n";
+  std::cout << "  w        Function w: Move forward\n";
+  std::cout << "  a        Function a: Move left\n";
+  std::cout << "  s        Function s: Move backward\n";
+  std::cout << "  d        Function d: Move right\n";
+  std::cout << "  x        Function x: Stop\n";
+  std::cout << "  t        Function t: Turn left\n";
+  std::cout << "  g        Function g: Turn right\n";
+  std::cout << "\n";
+  std::cout << "Head Functions:\n";
+  std::cout << "  b        Function b: Head look up\n";
+  std::cout << "  j        Function j: Head look down\n";
+  std::cout << "  k        Function   : Head turn left\n";
+  std::cout << "  l        Function l: Head turn right\n";
+  std::cout << "  u        Function u: Head reset\n";
+  std::cout << "\n";
+  std::cout << "  ESC      Exit program\n";
+  std::cout << "  ?        Function ?: Print help\n";
 }
 
 int getch() {
@@ -115,11 +126,88 @@ void JoyStickCommand(float left_x_axis,
   usleep(50000);
 }
 
+void HeadLookUp() {
+  // Get high-level motion controller
+  auto& controller = robot.GetHighLevelMotionController();
+
+  // Head look up
+  auto status = controller.HeadMove(0.0, 0.1, 10000);
+  if (status.code != ErrorCode::OK) {
+    std::cerr << "head look up failed"
+              << ", code: " << status.code
+              << ", message: " << status.message << std::endl;
+    return;
+  }
+  std::cout << "head look up successfully." << std::endl;
+}
+
+void HeadLookDown() {
+  // Get high-level motion controller
+  auto& controller = robot.GetHighLevelMotionController();
+
+  // Head look down
+  auto status = controller.HeadMove(0.0, -0.1, 10000);
+  if (status.code != ErrorCode::OK) {
+    std::cerr << "head look down failed"
+              << ", code: " << status.code
+              << ", message: " << status.message << std::endl;
+    return;
+  }
+  std::cout << "head look down successfully." << std::endl;
+}
+
+void HeadTurnLeft() {
+  // Get high-level motion controller
+  auto& controller = robot.GetHighLevelMotionController();
+
+  // Head turn left
+  auto status = controller.HeadMove(-0.2, 0.0, 10000);
+  if (status.code != ErrorCode::OK) {
+    std::cerr << "head turn left failed"
+              << ", code: " << status.code
+              << ", message: " << status.message << std::endl;
+    return;
+  }
+  std::cout << "head turn left successfully." << std::endl;
+}
+
+void HeadTurnRight() {
+  // Get high-level motion controller
+  auto& controller = robot.GetHighLevelMotionController();
+
+  // Head turn right
+  auto status = controller.HeadMove(0.2, 0.0, 10000);
+  if (status.code != ErrorCode::OK) {
+    std::cerr << "head turn right failed"
+              << ", code: " << status.code
+              << ", message: " << status.message << std::endl;
+    return;
+  }
+  std::cout << "head turn right successfully." << std::endl;
+}
+
+void HeadReset() {
+  // Get high-level motion controller
+  auto& controller = robot.GetHighLevelMotionController();
+
+  // Head reset
+  auto status = controller.HeadMove(0.0, 0.0, 10000);
+  if (status.code != ErrorCode::OK) {
+    std::cerr << "head reset failed"
+              << ", code: " << status.code
+              << ", message: " << status.message << std::endl;
+    return;
+  }
+  std::cout << "head reset successfully." << std::endl;
+}
+
 int main(int argc, char* argv[]) {
   // Bind SIGINT (Ctrl+C)
   signal(SIGINT, signalHandler);
 
-  print_help(argv[0]);
+  std::cout << "SDK Version: " << SDK_VERSION_STRING << std::endl;
+
+  print_help();
 
   std::string local_ip = "192.168.54.111";
   // Configure local IP address for direct network connection and initialize SDK
@@ -160,6 +248,7 @@ int main(int argc, char* argv[]) {
 
     std::cout << "Key ASCII: " << key << ", Character: " << static_cast<char>(key) << std::endl;
     switch (key) {
+      // 1. Gait and Trick Functions
       case '1': {
         RecoveryStand();
         break;
@@ -172,32 +261,65 @@ int main(int argc, char* argv[]) {
         ExecuteTrick();
         break;
       }
-      case 'w': {
+      // 2. Joystick Functions
+      case 'w':
+      case 'W': {
         JoyStickCommand(0.0, 1.0, 0.0, 0.0);  // Forward
         break;
       }
-      case 'a': {
+      case 'a':
+      case 'A': {
         JoyStickCommand(-1.0, 0.0, 0.0, 0.0);  // Left
         break;
       }
-      case 's': {
+      case 's':
+      case 'S': {
         JoyStickCommand(0.0, -1.0, 0.0, 0.0);  // Backward
         break;
       }
-      case 'd': {
+      case 'd':
+      case 'D': {
         JoyStickCommand(1.0, 0.0, 0.0, 0.0);  // Right
         break;
       }
-      case 'x': {
+      case 'x':
+      case 'X': {
         JoyStickCommand(0.0, 0.0, 0.0, 0.0);  // Stop
         break;
       }
-      case 't': {
+      case 't':
+      case 'T': {
         JoyStickCommand(0.0, 0.0, -1.0, 0.0);  // Turn left
         break;
       }
-      case 'g': {
+      case 'g':
+      case 'G': {
         JoyStickCommand(0.0, 0.0, 1.0, 0.0);  // Turn right
+        break;
+      }
+      // 3. Head Functions
+      case 'b': {
+        HeadLookUp();
+        break;
+      }
+      case 'j': {
+        HeadLookDown();
+        break;
+      }
+      case 'k': {
+        HeadTurnLeft();
+        break;
+      }
+      case 'l': {
+        HeadTurnRight();
+        break;
+      }
+      case 'u': {
+        HeadReset();
+        break;
+      }
+      case '?': {
+        print_help();
         break;
       }
       default:

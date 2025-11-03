@@ -116,10 +116,20 @@ class MAGIC_EXPORT_API SensorController final : public NonCopyable {
   void SubscribeLidarImu(const LidarImuCallback callback);
 
   /**
+   * @brief Unsubscribe from LiDAR IMU data
+   */
+  void UnsubscribeLidarImu();
+
+  /**
    * @brief Subscribe to LiDAR point cloud data
    * @param callback Processing callback after receiving point cloud data
    */
   void SubscribeLidarPointCloud(const LidarPointCloudCallback callback);
+
+  /**
+   * @brief Unsubscribe from LiDAR point cloud data
+   */
+  void UnsubscribeLidarPointCloud();
 
   /**
    * @brief Subscribe to head RGBD color image data
@@ -128,10 +138,20 @@ class MAGIC_EXPORT_API SensorController final : public NonCopyable {
   void SubscribeHeadRgbdColorImage(const RgbdImageCallback callback);
 
   /**
+   * @brief Unsubscribe from head RGBD color image data
+   */
+  void UnsubscribeHeadRgbdColorImage();
+
+  /**
    * @brief Subscribe to head RGBD color camera parameter data
    * @param callback Processing callback after receiving camera information
    */
   void SubscribeHeadRgbdColorCameraInfo(const RgbdCameraInfoCallback callback);
+
+  /**
+   * @brief Unsubscribe from head RGBD color camera parameter data
+   */
+  void UnsubscribeHeadRgbdColorCameraInfo();
 
   /**
    * @brief Subscribe to head RGBD depth image data
@@ -140,10 +160,20 @@ class MAGIC_EXPORT_API SensorController final : public NonCopyable {
   void SubscribeHeadRgbdDepthImage(const RgbdImageCallback callback);
 
   /**
+   * @brief Unsubscribe from head RGBD depth image data
+   */
+  void UnsubscribeHeadRgbdDepthImage();
+
+  /**
    * @brief Subscribe to head RGBD depth camera parameter data
    * @param callback Processing callback after receiving depth camera information
    */
   void SubscribeHeadRgbdDepthCameraInfo(const RgbdCameraInfoCallback callback);
+
+  /**
+   * @brief Unsubscribe from head RGBD depth camera parameter data
+   */
+  void UnsubscribeHeadRgbdDepthCameraInfo();
 
   /**
    * @brief Subscribe to waist RGBD color image data
@@ -152,10 +182,20 @@ class MAGIC_EXPORT_API SensorController final : public NonCopyable {
   void SubscribeWaistRgbdColorImage(const RgbdImageCallback callback);
 
   /**
+   * @brief Unsubscribe from waist RGBD color image data
+   */
+  void UnsubscribeWaistRgbdColorImage();
+
+  /**
    * @brief Subscribe to waist RGBD color camera parameter data
    * @param callback Processing callback after receiving camera information
    */
   void SubscribeWaistRgbdColorCameraInfo(const RgbdCameraInfoCallback callback);
+
+  /**
+   * @brief Unsubscribe from waist RGBD color camera parameter data
+   */
+  void UnsubscribeWaistRgbdColorCameraInfo();
 
   /**
    * @brief Subscribe to waist RGBD depth image data
@@ -164,16 +204,31 @@ class MAGIC_EXPORT_API SensorController final : public NonCopyable {
   void SubscribeWaistRgbdDepthImage(const RgbdImageCallback callback);
 
   /**
+   * @brief Unsubscribe from waist RGBD depth image data
+   */
+  void UnsubscribeWaistRgbdDepthImage();
+
+  /**
    * @brief Subscribe to waist RGBD depth camera parameter data
    * @param callback Processing callback after receiving depth camera information
    */
   void SubscribeWaistRgbdDepthCameraInfo(const RgbdCameraInfoCallback callback);
 
   /**
+   * @brief Unsubscribe from waist RGBD depth camera parameter data
+   */
+  void UnsubscribeWaistRgbdDepthCameraInfo();
+
+  /**
    * @brief Subscribe to trinocular camera image frame data
    * @param callback Processing callback after receiving trinocular camera data
    */
   void SubscribeTrinocularImage(const TrinocularImageCallback callback);
+
+  /**
+   * @brief Unsubscribe from trinocular camera image frame data
+   */
+  void UnsubscribeTrinocularImage();
 
  private:
   std::atomic_bool is_shutdown_{true};  // Flag indicating whether initialized

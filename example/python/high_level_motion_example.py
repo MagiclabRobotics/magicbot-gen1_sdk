@@ -1,9 +1,12 @@
 #!/usr/bin/env python3
+# -*- coding: utf-8 -*-
 
 import sys
 import time
 import signal
 import logging
+import termios
+import tty
 from typing import Optional
 
 import magicbot_gen1_python as magicbot
@@ -26,8 +29,6 @@ def signal_handler(signum, frame):
     logging.info("Received interrupt signal (%s), exiting...", signum)
     running = False
     if robot:
-        robot.disconnect()
-        logging.info("Robot disconnected")
         robot.shutdown()
         logging.info("Robot shutdown")
     exit(-1)
@@ -37,38 +38,39 @@ def print_help():
     """Print help information"""
     logging.info("High-Level Motion Control Function Demo Program")
     logging.info("")
-    logging.info("Key Function Description:")
-    logging.info("  ESC      Exit program")
+    logging.info("Gait and Trick Functions:")
+    logging.info("  0        Function 0: Pure damper")
     logging.info("  1        Function 1: Recovery stand")
     logging.info("  2        Function 2: Balance stand")
     logging.info("  3        Function 3: Execute trick - celebrate action")
-    logging.info("  w        Function 4: Move forward")
-    logging.info("  a        Function 5: Move left")
-    logging.info("  s        Function 6: Move backward")
-    logging.info("  d        Function 7: Move right")
-    logging.info("  x        Function 7: stop move")
-    logging.info("  t        Function 8: Turn left")
-    logging.info("  g        Function 9: Turn right")
+    logging.info("")
+    logging.info("Joystick Functions:")
+    logging.info("  w        Function w: Move forward")
+    logging.info("  a        Function a: Move left")
+    logging.info("  s        Function s: Move backward")
+    logging.info("  d        Function d: Move right")
+    logging.info("  x        Function x: Stop move")
+    logging.info("  t        Function t: Turn left")
+    logging.info("  g        Function g: Turn right")
+    logging.info("")
+    logging.info("Head Functions:")
+    logging.info("  b        Function b: Head look up")
+    logging.info("  j        Function j: Head look down")
+    logging.info("  k        Function k: Head turn left")
+    logging.info("  l        Function l: Head turn right")
+    logging.info("  u        Function u: Head reset")
+    logging.info("")
+    logging.info("  ?        Function ?: Print help")
+    logging.info("  ESC      Exit program")
 
 
 def get_user_input():
-    """Get user input"""
+    """Get user input - Read a single line of data"""
     try:
-        # Python implementation of getch() on Linux systems
-        import tty
-        import termios
-
-        fd = sys.stdin.fileno()
-        old_settings = termios.tcgetattr(fd)
-        try:
-            tty.setraw(sys.stdin.fileno())
-            ch = sys.stdin.read(1)
-        finally:
-            termios.tcsetattr(fd, termios.TCSADRAIN, old_settings)
-        return ch
-    except ImportError:
-        # If termios is not available, use simple input
-        return input("Please press a key: ").strip()
+        # Method 1: Read a line using input() (recommended)
+        return input("Enter command: ").strip()
+    except (EOFError, KeyboardInterrupt):
+        return ""
 
 
 def recovery_stand():
@@ -152,17 +154,48 @@ def pure_damper():
         return False
 
 
-def execute_trick_celebrate():
-    """Execute trick - celebrate action"""
+def get_action(cmd):
+    if cmd == "201":
+        return magicbot.TrickAction.ACTION_CELEBRATE
+    elif cmd == "217":
+        return magicbot.TrickAction.ACTION_SHAKE_HAND_REACHOUT
+    elif cmd == "218":
+        return magicbot.TrickAction.ACTION_SHAKE_HAND_WITHDRAW
+    elif cmd == "219":
+        return magicbot.TrickAction.ACTION_NOD_HEAD
+    elif cmd == "220":
+        return magicbot.TrickAction.ACTION_SHAKE_HEAD
+    elif cmd == "221":
+        return magicbot.TrickAction.ACTION_CIRCLE_HEAD
+    elif cmd == "301":
+        return magicbot.TrickAction.ACTION_GTEETING
+    elif cmd == "302":
+        return magicbot.TrickAction.ACTION_POINT_GROUND
+    elif cmd == "303":
+        return magicbot.TrickAction.ACTION_POINT_GROUND_WITH_DRAW
+    elif cmd == "304":
+        return magicbot.TrickAction.ACTION_SPREAD_HAND
+    elif cmd == "305":
+        return magicbot.TrickAction.ACTION_SPREAD_HAND_WITH_DRAW
+    elif cmd == "306":
+        return magicbot.TrickAction.ACTION_TRUN_AWAY_LEFT_INTRODUCE
+    elif cmd == "307":
+        return magicbot.TrickAction.ACTION_TRUN_BACK_LEFT_INTRODUCE
+    else:
+        return magicbot.TrickAction.ACTION_NONE
+
+
+def execute_trick_action(cmd):
+    """Execute trick action"""
     global robot
     try:
-        logging.info("=== Executing Trick - Celebrate Action ===")
+        logging.info("=== Executing Trick - %s Action ===", cmd)
 
         # Get high-level motion controller
         controller = robot.get_high_level_motion_controller()
 
         # Execute celebrate trick
-        status = controller.execute_trick(magicbot.TrickAction.ACTION_CELEBRATE, 10000)
+        status = controller.execute_trick(get_action(cmd), 10000)
         if status.code != magicbot.ErrorCode.OK:
             logging.error(
                 "Failed to execute robot trick, code: %s, message: %s",
@@ -255,6 +288,85 @@ def stop_move():
     return joystick_command(0.0, 0.0, 0.0, 0.0)
 
 
+def head_move(shake_angle, nod_angle):
+    """Move head to specified shake and nod angles"""
+    global robot
+    try:
+        # Get high-level motion controller
+        controller = robot.get_high_level_motion_controller()
+
+        # Move head
+        status = controller.head_move(shake_angle, nod_angle, 5000)
+        if status.code != magicbot.ErrorCode.OK:
+            logging.error(
+                "Failed to move head, code: %s, message: %s",
+                status.code,
+                status.message,
+            )
+            return False
+
+        logging.info(
+            "Head moved successfully: shake=%.2f rad, nod=%.2f rad",
+            shake_angle,
+            nod_angle,
+        )
+        return True
+
+    except Exception as e:
+        logging.error("Exception occurred while moving head: %s", e)
+        return False
+
+
+def head_look_up():
+    """Head look up"""
+    logging.info("=== Head Looking Up ===")
+    # Nod angle: up is positive
+    return head_move(0.0, 0.349)
+
+
+def head_look_down():
+    """Head look down"""
+    logging.info("=== Head Looking Down ===")
+    # Nod angle: down is negative
+    return head_move(0.0, -0.349)
+
+
+def head_turn_left():
+    """Head turn left"""
+    logging.info("=== Head Turning Left ===")
+    # Shake angle: left is negative
+    return head_move(-0.523, 0.0)
+
+
+def head_turn_right():
+    """Head turn right"""
+    logging.info("=== Head Turning Right ===")
+    # Shake angle: right is positive
+    return head_move(0.523, 0.0)
+
+
+def head_reset():
+    """Head reset to center position"""
+    logging.info("=== Head Reset ===")
+    return head_move(0.0, 0.0)
+
+
+# Get single character input (no echo)
+def getch():
+    fd = sys.stdin.fileno()
+    old_settings = termios.tcgetattr(fd)
+    try:
+        tty.setraw(sys.stdin.fileno())
+        ch = sys.stdin.read(1)
+        logging.info(f"Received character: {ch}")
+
+        sys.stdout.write("\r")
+        sys.stdout.flush()
+    finally:
+        termios.tcsetattr(fd, termios.TCSADRAIN, old_settings)
+    return ch
+
+
 def main():
     """Main function"""
     global robot, running
@@ -321,35 +433,70 @@ def main():
         # Main loop
         while running:
             try:
-                key = get_user_input()
-
+                key = getch()
                 if key == "\x1b":  # ESC key
                     break
 
-                logging.info("Key pressed: %s", key)
-
+                # 1. Gait and Trick Functions
+                # 1.1 Pure damper mode
                 if key == "0":
                     pure_damper()
+                # 1.2 Recovery stand
                 elif key == "1":
                     recovery_stand()
+                # 1.3 Balance stand
                 elif key == "2":
                     balance_stand()
+                # 1.4 Execute trick action
                 elif key == "3":
-                    execute_trick_celebrate()
-                elif key == "w":
+                    str_input = get_user_input()
+                    # Split input parameters by space
+                    parts = str_input.strip().split()
+                    # Parse parameters
+                    cmd = parts[0] if parts else "201"
+                    print("cmd: ", cmd)
+                    execute_trick_action(cmd)
+                # 2. Joystick Functions
+                # 2.1 Move forward
+                elif key.upper() == "W":
                     move_forward()
-                elif key == "a":
+                # 2.2 Move left
+                elif key.upper() == "A":
                     move_left()
-                elif key == "s":
+                # 2.3 Move backward
+                elif key.upper() == "S":
                     move_backward()
-                elif key == "d":
+                # 2.4 Move right
+                elif key.upper() == "D":
                     move_right()
-                elif key == "x":
-                    stop_move()
-                elif key == "t":
+                # 2.5 Turn left
+                elif key.upper() == "T":
                     turn_left()
-                elif key == "g":
+                # 2.6 Turn right
+                elif key.upper() == "G":
                     turn_right()
+                # 2.7 Stop movement
+                elif key.upper() == "X":
+                    stop_move()
+                # 3. Head Functions
+                # 3.1 Look up
+                elif key.upper() == "B":
+                    head_look_up()
+                # 3.2 Look down
+                elif key.upper() == "J":
+                    head_look_down()
+                # 3.3 Turn left
+                elif key.upper() == "K":
+                    head_turn_left()
+                # 3.4 Turn right
+                elif key.upper() == "L":
+                    head_turn_right()
+                # 3.5 Reset position
+                elif key.upper() == "U":
+                    head_reset()
+                # 4. Print help information
+                elif key.upper() == "?":
+                    print_help()
                 else:
                     logging.info("Unknown key: %s", key)
 

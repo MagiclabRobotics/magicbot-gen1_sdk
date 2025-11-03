@@ -77,7 +77,7 @@ class MAGIC_EXPORT_API HighLevelMotionController final : public MotionController
   /**
    * @brief Set robot gait mode (such as recovery stand, balance stand, humanoid walk, etc., refer to GaitMode definition).
    * @param gait_mode Enum type gait mode.
-   * @param timeout_ms Timeout in milliseconds.
+   * @param timeout_ms Timeout in milliseconds, default is 10000
    * @return Execution status.
    */
   Status SetGait(const GaitMode gait_mode, int timeout_ms = 10000);
@@ -92,7 +92,7 @@ class MAGIC_EXPORT_API HighLevelMotionController final : public MotionController
   /**
    * @brief Execute specified trick action (such as bowing, waving, etc.).
    * @param trick_action Trick action identifier.
-   * @param timeout_ms Timeout in milliseconds.
+   * @param timeout_ms Timeout in milliseconds, default is 10000
    * @return Execution status.
    * @note Trick actions are usually predefined complex action sequences, must be performed under GaitMode::GAIT_BALANCE_STAND(46) gait for trick display.
    */
@@ -104,6 +104,15 @@ class MAGIC_EXPORT_API HighLevelMotionController final : public MotionController
    * @return Execution status.
    */
   Status SendJoyStickCommand(JoystickCommand& joy_command);
+
+  /**
+   * @brief Move head to specified shake and nod rad
+   * @param shake_angle Shake angle in rad, direction: left: negative, right: positive, unit: rad, range: [-0.5236, 0.5236]
+   * @param nod_angle Nod angle in rad, direction: up: positive, down: negative, unit: rad, range: [-0.3491, 0.3491]
+   * @param timeout_ms Timeout in milliseconds, default is 5000
+   * @return Execution status.
+   */
+  Status HeadMove(float shake_angle, float nod_angle, int timeout_ms = 5000);
 };
 
 /**
@@ -153,6 +162,11 @@ class MAGIC_EXPORT_API LowLevelMotionController final : public MotionControllerB
   void SubscribeArmState(ArmJointStateCallback callback);
 
   /**
+   * @brief Unsubscribe from arm joint state data
+   */
+  void UnsubscribeArmState();
+
+  /**
    * @brief Publish arm joint control command
    * @param command Arm joint control command containing target angle/velocity and other control information
    * @return Execution status.
@@ -166,6 +180,11 @@ class MAGIC_EXPORT_API LowLevelMotionController final : public MotionControllerB
    * @param callback Callback function for processing received leg joint state data
    */
   void SubscribeLegState(LegJointStateCallback callback);
+
+  /**
+   * @brief Unsubscribe from leg joint state data
+   */
+  void UnsubscribeLegState();
 
   /**
    * @brief Publish leg joint control command
@@ -183,6 +202,11 @@ class MAGIC_EXPORT_API LowLevelMotionController final : public MotionControllerB
   void SubscribeHeadState(HeadJointStateCallback callback);
 
   /**
+   * @brief Unsubscribe from head joint state data
+   */
+  void UnsubscribeHeadState();
+
+  /**
    * @brief Publish head joint control command
    * @param command Head joint control command containing target angle/velocity and other control information
    * @return Execution status.
@@ -196,6 +220,11 @@ class MAGIC_EXPORT_API LowLevelMotionController final : public MotionControllerB
    * @param callback Callback function for processing received waist joint state data
    */
   void SubscribeWaistState(WaistJointStateCallback callback);
+
+  /**
+   * @brief Unsubscribe from waist joint state data
+   */
+  void UnsubscribeWaistState();
 
   /**
    * @brief Publish waist joint control command
@@ -213,6 +242,11 @@ class MAGIC_EXPORT_API LowLevelMotionController final : public MotionControllerB
   void SubscribeHandState(HandStateCallback callback);
 
   /**
+   * @brief Unsubscribe from hand state data
+   */
+  void UnsubscribeHandState();
+
+  /**
    * @brief Publish hand control command
    * @param command Hand control command containing gripper action, force control and other information
    * @return Execution status.
@@ -224,6 +258,11 @@ class MAGIC_EXPORT_API LowLevelMotionController final : public MotionControllerB
    * @param callback Processing callback after receiving IMU data
    */
   void SubscribeBodyImu(const BodyImuCallback callback);
+
+  /**
+   * @brief Unsubscribe from body IMU data
+   */
+  void UnsubscribeBodyImu();
 };
 
 }  // namespace magic::gen1::motion
