@@ -37,11 +37,6 @@ net.core.wmem_default=20971520
 - C++20 (minimum)
 - python3.10
 
-### 4. Dependencies
-
-- libzmq3-dev
-- libsystemd-dev
-
 ## Build examples
 To build the examples inside this reposity:
 ```
