@@ -267,6 +267,9 @@ def main():
         logging.info("Subscribed to waist joint state")
 
         # Main loop
+        interval = 0.002  # 2ms
+        next_t = time.perf_counter() + interval
+
         global running
         while running:
             # Create arm joint control command
@@ -328,7 +331,10 @@ def main():
             # Publish head joint control command
             controller.publish_head_command(head_command)
 
-            time.sleep(0.002)
+            next_t += interval
+            sleep_time = next_t - time.perf_counter()
+            if sleep_time > 0:
+                time.sleep(sleep_time)
 
     except Exception as e:
         logging.error("Exception occurred during program execution: %s", e)

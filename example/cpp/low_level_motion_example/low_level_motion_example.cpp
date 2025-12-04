@@ -3,8 +3,10 @@
 
 #include <unistd.h>
 #include <atomic>
+#include <chrono>
 #include <csignal>
 #include <iostream>
+#include <thread>
 
 using namespace magic::gen1;
 
@@ -90,6 +92,7 @@ int main() {
 
   // Using arm joint control as an example:
   // Subsequent joint control commands, joint operation mode is 1, indicating the joint is in position control mode
+  auto now = std::chrono::steady_clock::now();
   while (running.load()) {
     // Left arm joints, refer to documentation:
     // Left arm or right arm joints 1-5 operation_mode needs to switch from mode: 200 to mode: 4 (series PID mode) for command execution;
@@ -109,7 +112,8 @@ int main() {
     controller.PublishArmCommand(arm_command);
 
     // Send control command at 500Hz frequency (2ms)
-    usleep(2000);
+    now += std::chrono::milliseconds(2);
+    std::this_thread::sleep_until(now);
   }
 
   // Disconnect from robot
