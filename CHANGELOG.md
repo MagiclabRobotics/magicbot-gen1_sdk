@@ -10,7 +10,7 @@ and adheres to [Semantic Versioning](https://semver.org/).
 **Corresponding Core Firmware Version: >= MagicBot-Gen1 20251128**
 
 ### Added
-- Added Chinese-language SDK development documentation;
+- Added SDK development documentation;
 
 ## [v1.2.2] - 2025-12-04
 
