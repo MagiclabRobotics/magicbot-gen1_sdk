@@ -30,7 +30,7 @@ int main() {
 
   std::cout << "SDK Version: " << SDK_VERSION_STRING << std::endl;
 
-  std::string local_ip = "192.168.54.111";
+  std::string local_ip = "127.0.0.1";
   // Configure local IP address for direct network connection and initialize SDK
   if (!robot.Initialize(local_ip)) {
     std::cerr << "robot sdk initialize failed." << std::endl;

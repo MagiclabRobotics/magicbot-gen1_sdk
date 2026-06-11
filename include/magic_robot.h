@@ -102,6 +102,12 @@ class MAGIC_EXPORT_API MagicRobot final : public NonCopyable {
   LowLevelMotionController& GetLowLevelMotionController();
 
   /**
+   * @brief Get upper body motion controller object.
+   * @return Reference type for users to control upper body joints.
+   */
+  UpperBodyMotionController& GetUpperBodyMotionController();
+
+  /**
    * @brief Get audio controller object.
    * @return Reference type for playing speech, adjusting volume, etc.
    */

@@ -16,6 +16,9 @@ using LowLevelMotionControllerPtr = std::unique_ptr<LowLevelMotionController>;
 class HighLevelMotionController;
 using HighLevelMotionControllerPtr = std::unique_ptr<HighLevelMotionController>;
 
+class UpperBodyMotionController;
+using UpperBodyMotionControllerPtr = std::unique_ptr<UpperBodyMotionController>;
+
 /**
  * @brief Abstract base class defining common interfaces for robot motion controllers.
  *
@@ -263,6 +266,80 @@ class MAGIC_EXPORT_API LowLevelMotionController final : public MotionControllerB
    * @brief Unsubscribe from body IMU data
    */
   void UnsubscribeBodyImu();
+};
+
+/**
+ * @class UpperBodyMotionController
+ * @brief Upper body motion controller, directly controls joint movements of various motion components (such as arms, head, waist, etc.).
+ *
+ * Targets upper body developers or control systems, providing command sending and status reading interfaces for various body components.
+ */
+ class MAGIC_EXPORT_API UpperBodyMotionController final : public MotionControllerBase {
+  // Message pointer type definitions (smart pointers for memory management)
+  using UpperBodyJointStatePtr = std::shared_ptr<JointState>;   // Upper body joint state message pointer
+  using AllHandStatePtr        = std::shared_ptr<AllHandState>; // All hand state message pointer
+
+  // Various joint data callback function type definitions
+  using UpperBodyJointStateCallback = std::function<void(const UpperBodyJointStatePtr)>; // Upper body joint state callback function type
+  using AllHandStateCallback        = std::function<void(const AllHandStatePtr)>;        // All hand state callback function type
+
+ public:
+  /// Constructor, initializes low-level controller.
+  UpperBodyMotionController();
+
+  /// Destructor, releases resources.
+  virtual ~UpperBodyMotionController();
+
+  /**
+   * @brief Initialize controller, establish upper body motion control connection.
+   * @return Whether initialization was successful.
+   */
+  virtual bool Initialize() override;
+
+  /**
+   * @brief Shutdown controller, release upper body resources.
+   */
+  virtual void Shutdown() override;
+
+  // === Upper body Control ===
+
+  /**
+   * @brief Subscribe to upper body joint state data
+   * @param callback Callback function for processing received upper body joint state data
+   */
+  void SubscribeUpperBodyState(UpperBodyJointStateCallback callback);
+
+  /**
+   * @brief Unsubscribe from upper body joint state data
+   */
+  void UnsubscribeUpperBodyState();
+
+  /**
+   * @brief Publish upper body joint control command
+   * @param command Upper body joint control command containing target angle/velocity and other control information
+   * @return Execution status.
+   */
+  Status PublishUpperBodyCommand(const JointCommand& command);
+
+  // === All Hand Control ===
+
+  /**
+   * @brief Subscribe to all hand state data
+   * @param callback Callback function for processing received all hand state data
+   */
+  void SubscribeAllHandState(AllHandStateCallback callback);
+
+  /**
+   * @brief Unsubscribe from all hand state data
+   */
+  void UnsubscribeAllHandState();
+
+  /**
+   * @brief Publish all hand control command
+   * @param command All hand control command containing target angle and other control information
+   * @return Execution status.
+   */
+  Status PublishAllHandCommand(const HandCommand& command);
 };
 
 }  // namespace magic::gen1::motion

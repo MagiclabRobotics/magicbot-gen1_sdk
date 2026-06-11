@@ -135,9 +135,10 @@ typedef struct robot_state {
  * @brief Motion controller level type, used to distinguish different controller responsibilities.
  */
 enum class ControllerLevel : int8_t {
-  UNKKOWN = 0,
-  HighLevel = 1,  ///< High-level controller
-  LowLevel = 2    ///< Low-level controller
+  UNKNOWN     = 0,
+  HighLevel   = 1,  ///< High-level controller
+  LowLevel    = 2,  ///< Low-level controller
+  HybridLevel = 3,  ///< Hybrid control level (high-level control + upper body control)
 };
 
 /**
@@ -183,6 +184,7 @@ enum class GaitMode : int32_t {
   GAIT_BALANCE_STAND = 46,   // Balance stand (supports movement)
   GAIT_ARM_SWING_WALK = 47,  // Arm swing walk
   GAIT_LOWLEVL_SDK = 200,    // Low-level control SDK mode
+  GAIT_HYBRID_SDK = 201,     // Hybrid control SDK mode (high-level control + upper body control)
 };
 
 /**
@@ -242,6 +244,25 @@ struct HandState {
 };
 
 /**
+ * @brief Single hand joint state
+ */
+struct OneHandState {
+  std::vector<int16_t> status_word;  ///< Status word
+  std::vector<double>  pos;          ///< Actual position (unit depends on controller definition)
+  std::vector<double>  toq;          ///< Actual torque (unit: Nm)
+  std::vector<double>  cur;          ///< Actual current (unit: A)
+  std::vector<int16_t> error_code;   ///< Error code (0 means normal)
+};
+
+/**
+ * @brief Complete hand state information
+ */
+struct AllHandState {
+  int64_t                   timestamp = 0; ///< Timestamp (unit: nanoseconds)
+  std::vector<OneHandState> state;         ///< All hand joint states (total of two), left hand and right hand in sequence
+};
+
+/**
  * @brief Single joint control command
  */
 struct SingleJointCommand {
@@ -263,6 +284,7 @@ struct SingleJointCommand {
  */
 struct JointCommand {
   int64_t timestamp;                       ///< Timestamp (unit: nanoseconds)
+  int32_t motion_mode = 0;                 ///< Motion mode (0: pass through, 1: movej, 2: movel, 3: movec)
   std::vector<SingleJointCommand> joints;  ///< Control commands for all joints
 };
 
